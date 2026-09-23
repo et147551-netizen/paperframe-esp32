@@ -482,7 +482,7 @@ static void test_the_degenerate_sizes_do_not_underflow(void)
 // ------------------------------------------------------- the header's persisted state
 
 // The folder cursor has to survive a reboot or a frame that restarts often never advances past
-// folder 0 -- observed for real on 2026-09-06, twice, once in a test and once when the operator
+// folder 0 -- observed for real on 2026-09-06, twice, once in a test and once when the owner
 // rebooted the board. It rides in the catalogue's own header because that file is already
 // rewritten once per run, so persisting it costs nothing.
 static void test_the_header_carries_the_cursor_and_seed(void)

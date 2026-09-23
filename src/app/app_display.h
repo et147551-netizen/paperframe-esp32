@@ -48,7 +48,7 @@ void app_display_set_rotation(uint8_t rotation);
 void app_display_set_palette(uint8_t palette);
 
 // Whether to classify each photograph and take its tone, range and dithering settings from the
-// class -- epdoptimize's auto flow (src/epd_auto.h). Same contract again: it applies to the next
+// class -- epdoptimize's auto flow (src/core/epd_auto.h). Same contract again: it applies to the next
 // render.
 //
 // **This overrides the filename rule documented below**, which is why the setting defaults off
@@ -56,7 +56,7 @@ void app_display_set_palette(uint8_t palette);
 // nothing of internal RAM.
 void app_display_set_auto_adjust(bool on);
 
-// Whether the quantiser is Floyd-Steinberg error diffusion (src/epd_diffuse.h) rather than M5GFX's
+// Whether the quantiser is Floyd-Steinberg error diffusion (src/core/epd_diffuse.h) rather than M5GFX's
 // row-wise pair search. Same contract: it applies to the next render.
 //
 // Independent of the auto flow above -- see app_settings.h for why the two are separate settings.
@@ -87,7 +87,7 @@ esp_err_t app_display_request_blank(void);
 // an EPD_COLOR_* from src/panel/epd_cmds.h; anything epd_color_valid() rejects, index 4 (orange)
 // included, returns ESP_ERR_INVALID_ARG here rather than failing a refresh later.
 //
-// **This is the one render path that does not go through the canvas**, which is what the operator
+// **This is the one render path that does not go through the canvas**, which is what the owner
 // asked for: the palette, the quantiser, the dither and the auto flow are all bypassed, so the
 // panel is driven with the index given and a person looking at the glass is looking at the ink
 // rather than at a colour-reduction decision. Like the blank, it forgets the current image, so a
@@ -98,7 +98,7 @@ esp_err_t app_display_request_flat(uint8_t colour_index);
 // information in words.
 //
 // **The text is why this struct exists.** The screen used to be two unlabelled QR squares, which
-// a phone can read and a person cannot -- so an operator on a PC had no way to learn the access
+// a phone can read and a person cannot -- so an owner on a PC had no way to learn the access
 // point's password, the frame's address or the pairing code, and could not get in at all. Every
 // field below is a string the caller has already formatted; this module keeps knowing nothing
 // about Wi-Fi or authentication and draws what it is given.
@@ -109,7 +109,7 @@ typedef struct {
     char join[160];   // WIFI:S:<ssid>;T:WPA;P:<pass>;; -- the QR a phone scans to join
     char url[160];    // http://<ap-ip>/?t=<token> -- the QR that pairs a browser in one tap
     char ssid[33];    // the access point's name, in words
-    // Its password, in words. **8 Crockford base32 characters since 2026-09-19** -- the operator
+    // Its password, in words. **8 Crockford base32 characters since 2026-09-19** -- the owner
     // asked for the shortest typeable one (ticket 66) -- so it is uppercase and it must still be
     // drawn verbatim: a WPA2 passphrase is compared byte-for-byte. 17 was the old 16-hex form.
     char ap_pass[9];

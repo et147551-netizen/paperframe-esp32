@@ -520,7 +520,7 @@ esp_err_t board_wifi_ap_window_open(void)
 
     // Seconds, not minutes: the shipping window is 30 min and an integer division printed "1 min"
     // for a 90-second bench override, which is a log line under-reporting a duration -- the class of
-    // thing docs/agents/method.md keeps a rule about.
+    // thing docs/method.md keeps a rule about.
     ESP_LOGI(TAG, "ap \"%s\" UP for %u s (%s)", s_ap_ssid,
              (unsigned)(FRAME_AP_WINDOW_MS / 1000u), s_ap_secured ? "WPA2" : "OPEN");
     return ESP_OK;

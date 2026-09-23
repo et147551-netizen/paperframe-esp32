@@ -42,7 +42,7 @@ static const char *TAG = "bringup";
 #ifdef BOARD_RETERMINAL_E1002
 // The E1002's panel is photographed with the flatbed rather than the webcam, and a scan of a
 // 7.3" panel takes longer than the 8 s this used to allow -- the following refresh then lands in
-// the scan's lower rows and reads exactly like a colour effect. docs/agents/hardware-runs.md has
+// the scan's lower rows and reads exactly like a colour effect. docs/hardware-runs.md has
 // that account, from env:photo making the same mistake at 300 dpi.
 #define DWELL_MS 20000
 #else

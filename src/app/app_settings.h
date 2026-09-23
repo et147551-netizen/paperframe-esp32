@@ -48,7 +48,7 @@
 // Ticket 60, FR-10.1: a Google Photos shared-album link. A resolved share URL with its key is
 // ~150 characters and a photos.app.goo.gl short link ~40.
 #define APP_SETTINGS_GPHOTOS_ALBUM_SIZE 256
-// Albums shown at once (the operator's change of 2026-09-13). Four is the UI's provisional limit.
+// Albums shown at once (the owner's change of 2026-09-13). Four is the UI's provisional limit.
 #define APP_SETTINGS_GPHOTOS_SLOTS 4
 
 #define APP_SETTINGS_MODE_LOCAL "mode_1"
@@ -57,7 +57,7 @@
 typedef struct {
     char wifi_ssid[APP_SETTINGS_SSID_SIZE];
     char wifi_password[APP_SETTINGS_PASS_SIZE];
-    // Quarter turns from the panel's native orientation, 0..3 since ticket 69 (the operator's
+    // Quarter turns from the panel's native orientation, 0..3 since ticket 69 (the owner's
     // request of 2026-09-20; it was 0 or 1 before, and FR-5.2 still says so -- the departure is
     // recorded in docs/requirements/digital-frame.md). The stored meaning of 0 and 1 is unchanged,
     // so no NVS migration exists or is needed. `epd_canvas.h` owns the range.
@@ -94,7 +94,7 @@ typedef struct {
     uint8_t palette;
 
     // Whether to classify each photograph and choose its tone, range and dithering settings
-    // from the class -- epdoptimize's own auto flow (src/epd_classify.h, src/epd_auto.h).
+    // from the class -- epdoptimize's own auto flow (src/core/epd_classify.h, src/core/epd_auto.h).
     // **Also not one of FR-8's nine**, same standing as `palette`.
     //
     // Default off, deliberately: auto overrides FR-3.3's filename rule, under which an
@@ -104,19 +104,19 @@ typedef struct {
     bool auto_adjust;
 
     // Whether the quantiser is epdoptimize's Floyd-Steinberg error diffusion
-    // (src/epd_diffuse.h) instead of M5GFX's row-wise pair search. **Also not one of FR-8's
+    // (src/core/epd_diffuse.h) instead of M5GFX's row-wise pair search. **Also not one of FR-8's
     // nine**, same standing as `palette` and `auto_adjust`.
     //
     // **Independent of `auto_adjust` on purpose, and it is not because they are unrelated.**
     // Both move the render towards what <https://paperlesspaper.github.io/epdoptimize> does by
     // default, and whether either *looks* better is still unanswered on the glass
-    // (docs/agents/handover-auto-flow.md). Folded into one setting there are two states to
+    // (docs/handover-auto-flow.md). Folded into one setting there are two states to
     // compare and a difference cannot be attributed; separate there are four, and it can.
     //
     // Default off for the same reason `auto_adjust` is: it replaces the colour reduction every
     // photograph goes through, and the shipping default should not change on a measurement
     // alone. It costs less than the path it replaces -- 602.7 + 217.6 against 1076.3 ms,
-    // docs/agents/measurements.md -- so it is not off for speed.
+    // docs/measurements.md -- so it is not off for speed.
     bool dither_diffuse;
 
     // Whether the slideshow walks a shuffled permutation instead of filename order
@@ -163,7 +163,7 @@ typedef struct {
     //
     // **Also not one of FR-8's nine**, and a deliberate departure from mirroring the
     // share byte for byte -- the same class of departure as the leading-dot rule in
-    // smb_manifest.h. Default **on** by operator decision, 2026-09-09 -- ahead of its
+    // smb_manifest.h. Default **on** by owner decision, 2026-09-09 -- ahead of its
     // own hardware evidence, and apply_defaults() in app_settings.c carries that
     // argument. Note it is not reversible for anything already imported: turning it
     // back off leaves the shrunk copies where they are until the share's own entries
@@ -176,13 +176,13 @@ typedef struct {
     //
     // Half a real library is the way up the frame is not, and that half is drawn at
     // 44-50 % of the panel where a turn gives 84-100 % -- so this is the largest single
-    // improvement ticket 50 found, and it only became so once the operator corrected the
+    // improvement ticket 50 found, and it only became so once the owner corrected the
     // bench share to test data. It is a DRAW-time decision and touches nothing on the
     // card: the stored fit target is a 600x600 square precisely so one stored file serves
     // either orientation, so changing this invalidates no cache.
     //
     // Not one of FR-8's nine, and FR-5's order says nothing about it. Default on by
-    // operator decision, 2026-09-09.
+    // owner decision, 2026-09-09.
     bool auto_rotate;
 
     // Minutes east of UTC, applied to the SNTP-synced system clock to get a local hour
@@ -211,7 +211,7 @@ typedef struct {
     uint8_t active_start_hour;
     uint8_t active_end_hour;
 
-    // Ticket 68, both halves of the operator's request of 2026-09-20. **Two scalars and not the
+    // Ticket 68, both halves of the owner's request of 2026-09-20. **Two scalars and not the
     // three that ticket anticipated**: weekly is the only cadence anybody asked for, so the day
     // encodes the schedule and there is no separate on/off. They are in this struct rather than
     // beside `s_settings` (where the Google Photos link had to go) because two bytes is not 256 --
@@ -222,7 +222,7 @@ typedef struct {
     // today's `hold=1` is exactly the image-sticking condition GooDisplay's own precautions warn
     // about; white applies their storage advice nightly and clears the previous render completely,
     // which measurements.md:123-133 shows a white render is the only thing that does. **Pure white
-    // was the operator's choice** -- a mostly-white standby carrying ticket 64's caption band was
+    // was the owner's choice** -- a mostly-white standby carrying ticket 64's caption band was
     // offered and rejected. Costs +1 refresh/day, not +2: the morning resume is already free
     // because app_slideshow.c does not touch its interval clock while the window is closed.
     //
@@ -252,7 +252,7 @@ typedef struct {
     // Inert without `standby_white`, which is itself inert without `low_power_mode`: no window, no edge.
     bool standby_deep;
 
-    // Ticket 71, the operator's battery-longevity request of 2026-09-20. **How full the cell is
+    // Ticket 71, the owner's battery-longevity request of 2026-09-20. **How full the cell is
     // allowed to get, as a percentage: 0 = do not manage the charger at all, 80 = cap, 100 =
     // restore the part's own default.** A lithium cell held at full ages faster than one held
     // near 80 %, and this frame lives on mains, so the cap is the single largest lever there is.
@@ -269,7 +269,7 @@ typedef struct {
     // than a preference. app_charge.c owns the mapping (80 % -> 4016 mV) and says why.
     //
     // Only 0, 80 and 100 are accepted -- refused rather than clamped, for the reason
-    // app_settings_set_palette() gives. Default **80**: the operator chose it, against 「時々は
+    // app_settings_set_palette() gives. Default **80**: the owner chose it, against 「時々は
     // 無給電で使う」, so the cell must still carry the frame for hours.
     //
     // Not one of FR-8's nine; the shipping firmware has no such setting and could not implement it.
@@ -328,7 +328,7 @@ void app_settings_wifi_password(char *out, size_t size);
 // Slot 0..APP_SETTINGS_GPHOTOS_SLOTS-1; "" for an empty or out-of-range slot.
 void app_settings_gphotos_album(size_t slot, char *out, size_t size);
 // The last link in `slot` that was read whole with photographs in it (ticket 60). A new link that
-// fails is replaced by this one -- the operator's rule of 2026-09-13.
+// fails is replaced by this one -- the owner's rule of 2026-09-13.
 void app_settings_gphotos_good(size_t slot, char *out, size_t size);
 // The switch alone, whatever the slots hold.
 bool app_settings_gphotos_switch(void);

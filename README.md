@@ -51,7 +51,7 @@ espsecure.py generate_signing_key --version 2 --scheme rsa3072 ~/.m5paper-keys/f
 ```
 
 PlatformIO's ESP-IDF Python environment may need `ecdsa intelhex pyserial reedsolo bitstring pyyaml`
-installed for `espsecure.py`; `docs/agents/build-system.md` has the command.
+installed for `espsecure.py`; `docs/build-system.md` has the command.
 
 ### Local settings (optional)
 
@@ -71,7 +71,7 @@ pairing code on the panel.
 ## Documentation
 
 - `docs/requirements/digital-frame.md` — requirements.
-- `docs/agents/` — build system, render pipeline, web API, SMB mirror, and the board and storage
+- `docs/` — build system, render pipeline, web API, SMB mirror, and the board and storage
   layers.
 - `docs/board-pinmap.md` — GPIO and peripheral map for both boards.
 - `tools/README.md` — the build, device, check and bench scripts.

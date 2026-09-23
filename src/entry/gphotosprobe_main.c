@@ -7,7 +7,7 @@
 // Either way it is the same number and nothing should be built before it exists.
 //
 // WHY IT IS THE DANGEROUS ONE. Internal RAM is the scarce resource here, not PSRAM
-// (docs/agents/board-and-storage.md). Shipping idle is int_free ~72 KB and dma_largest
+// (docs/board-and-storage.md). Shipping idle is int_free ~72 KB and dma_largest
 // ~31 KB, and BELOW ABOUT 2 KB OF dma_largest lwIP silently drops arriving frames: the
 // board stops answering ICMP and TCP with a perfectly healthy console. The existing worst
 // cases leave very little room -- an upload's thumbnail sidecar takes int_min to 1,995 B,
@@ -28,7 +28,7 @@
 // and dma_largest BETWEEN STAGE MARKS at 20 ms, and every stamp prints the stage's own
 // trough beside the since-boot one.
 //
-// PRIVACY (operator's instruction, 2026-09-12). The share URL carries a `key` that is a
+// PRIVACY (owner's instruction, 2026-09-12). The share URL carries a `key` that is a
 // bearer capability to the whole album, and a photo URL fetches a photograph to anyone
 // holding it. NEITHER IS EVER PRINTED. The log carries the host, the path length and the
 // byte counts, which is everything the measurement needs.

@@ -52,7 +52,7 @@ static const char *TAG = "gphotos";
 
 // After the SMB mirror's first run at 30 s, so the two first runs do not start together.
 #define GPHOTOS_FIRST_DELAY_MS 90000
-// Once a day, counted from the end of the last run (the operator's change of 2026-09-13). Manual
+// Once a day, counted from the end of the last run (the owner's change of 2026-09-13). Manual
 // reads come from the page's Sync now.
 #ifndef GPHOTOS_PERIOD_MS
 #define GPHOTOS_PERIOD_MS (24LL * 60 * 60 * 1000)
@@ -776,7 +776,7 @@ static void do_list(app_gphotos_status_t *st, smb_manifest_t *m, char *url, size
         }
         album_free(&a);
 
-        // THE OPERATOR'S RULE OF 2026-09-13, per slot: a NEW link that cannot be read, or holds
+        // THE OWNER'S RULE OF 2026-09-13, per slot: a NEW link that cannot be read, or holds
         // nothing, is not kept. The last link that read whole with photographs in it is put back
         // and the failure is reported, so the frame goes on showing the album it was showing and
         // the page says why the change did not take. The list needs nothing: it is only ever

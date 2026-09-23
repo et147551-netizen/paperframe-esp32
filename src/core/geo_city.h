@@ -1,7 +1,7 @@
 // Offline reverse geocoding, city level, ASCII, uppercase.
 //
 // A photograph's GPS tag turned into `TOKYO JAPAN` for the matte band (ticket 64), with **no API
-// and no network**. The operator's constraint is what makes that affordable: city level and ASCII
+// and no network**. The owner's constraint is what makes that affordable: city level and ASCII
 // only. Street-level accuracy would need a database nobody puts on a photo frame, and local place
 // names would need a CJK font -- a glyph table with a licence attached, which is exactly what
 // ticket 65 is unwinding.
@@ -10,13 +10,13 @@
 // memory-mapped from flash and costs no internal RAM at all; a weather API over TLS costs 45-47 KB
 // of it (measured, ticket 60), and internal RAM is this board's scarce resource. It is also better
 // on privacy than any API route: nothing leaves the frame, and the caller keeps the NAME rather
-// than the coordinates -- "derive before you retain", the operator's instruction of 2026-09-12.
+// than the coordinates -- "derive before you retain", the owner's instruction of 2026-09-12.
 //
 // **The data is Natural Earth's `ne_10m_populated_places`, public domain.** GeoNames `cities15000`
 // has better coverage and an explicit ASCII column, and is CC BY 4.0; an attribution obligation is
 // not worth taking on for a line of text while ticket 65 is removing one. `tools/gen_cities.py`
 // turns the download into `geo_city_table.c` and **nothing in the build runs it**, so check for the
-// artefact rather than the exit code (`docs/agents/build-system.md`).
+// artefact rather than the exit code (`docs/build-system.md`).
 
 #ifndef GEO_CITY_H
 #define GEO_CITY_H

@@ -11,7 +11,7 @@
 //   * It does NOT write the RX8130. board_rtc_read() exists and board_rtc_write() does not,
 //     and the time-register base is marked UNVERIFIED for reading -- writing a wrong register
 //     on the PM1's shared I2C bus is a different risk class, and it belongs in its own arm
-//     with the operator present. So the clock does not survive a power cut, and ticket 42
+//     with the owner present. So the clock does not survive a power cut, and ticket 42
 //     treats "no clock yet" as a first-class state instead.
 //   * It does NOT make the RTC a timing reference. docs/timing-instrumentation.md §3-4 gives
 //     the two jobs the RX8130 has, and a one-second calendar clock is not the measurement
@@ -21,7 +21,7 @@
 // harness_main.c compares ELAPSED esp_timer against ELAPSED RTC seconds; a sync landing
 // inside a run would step one of those intervals and report a percent-level error that is not
 // one. env:frame and env:m5papercolor are separate builds, so honouring that costs nothing --
-// but under espidf `build_src_filter` does nothing (docs/agents/build-system.md), so the
+// but under espidf `build_src_filter` does nothing (docs/build-system.md), so the
 // mechanism is that only frame_main.c calls app_clock_init() and --gc-sections drops the rest.
 //
 // **CHECKED IN THE ELF rather than argued, 2026-09-10**, because "the linker will drop it" is

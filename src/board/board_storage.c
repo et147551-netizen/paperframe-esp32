@@ -475,7 +475,7 @@ esp_err_t board_storage_usage(uint64_t *total_bytes, uint64_t *free_bytes)
 // **Windows formats a card of 2 GB or less as FAT (FAT16) by default**, so an ordinary reformat
 // produces exactly this. Seen on the E1002's 2 GB card on 2026-09-22: 73 photographs plus
 // thumbnails were 506 entries, uploads failed, and deleting ONE unrelated photograph let exactly
-// two more through (docs/agents/defect-log.md). Nothing here can lift the limit -- the card is
+// two more through (docs/defect-log.md). Nothing here can lift the limit -- the card is
 // never formatted by this firmware (storage_create()) -- so the page warns and the user
 // reformats: `format X: /FS:FAT32 /A:4096` gives ~485 k clusters on 2 GB, well above FAT32's
 // 65,525-cluster floor. Moving the photographs into a subdirectory would also lift it, and

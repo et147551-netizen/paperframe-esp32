@@ -731,7 +731,7 @@ static void test_cfg_rejects_null(void)
 // does; if the stock palette were edited, both sides would move together and the test
 // would still pass. These pin the output itself.
 //
-// Generated from src/epd_dither.c at the commit that chose the default, over
+// Generated from src/core/epd_dither.c at the commit that chose the default, over
 // src[i] = (i * 37) & 0xFF, row y = 3.
 static const uint8_t golden_stock_none[32] = {
     0x05, 0x35, 0x26, 0x10, 0x53, 0x52, 0x61, 0x05,
@@ -763,7 +763,7 @@ static const uint8_t golden_manual_quality[32] = {
 };
 
 // EPD_RENDER_DEFAULT as of 2026-09-05: epdoptimize's aitjcize calibration, fully compressed.
-// Generated from src/epd_dither.c over the same input, at the commit that adopted it.
+// Generated from src/core/epd_dither.c over the same input, at the commit that adopted it.
 static const uint8_t golden_default_none[32] = {
     0x05, 0x36, 0x26, 0x16, 0x53, 0x62, 0x61, 0x65,
     0x36, 0x26, 0x16, 0x13, 0x52, 0x61, 0x61, 0x05,

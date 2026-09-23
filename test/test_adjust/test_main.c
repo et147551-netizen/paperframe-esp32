@@ -1,4 +1,4 @@
-// Is src/epd_adjust.c the same function as src/epd_epdopt.c's first two stages?
+// Is src/core/epd_adjust.c the same function as src/core/epd_epdopt.c's first two stages?
 //
 // Run: ~/.platformio/penv/Scripts/pio.exe test -e native
 //
@@ -365,7 +365,7 @@ static void test_rejects_null(void)
 #define STAGE_MAX_DIFF 2
 #define STAGE_MEAN_DIFF 0.05
 
-// The values src/epd_auto.c produces for the arms that set these, and the same ones
+// The values src/core/epd_auto.c produces for the arms that set these, and the same ones
 // tools/epdopt_reference.mjs generated the fixtures with.
 static const epd_paper_t STAGE_PAPER_CFG = {
     true, 0.95f, 82.0f, 0.56f, 8.0f, 0.95f, 0.85f, {248, 248, 246},

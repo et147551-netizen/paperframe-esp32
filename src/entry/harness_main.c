@@ -341,7 +341,7 @@ void app_main(void)
             // win means nothing until the same chart under both sequences has been
             // looked at. If the flatbed is asleep the capture fails per marker while
             // the run carries on, so check WIA sees it before trusting the run for
-            // images (docs/agents/hardware-runs.md).
+            // images (docs/hardware-runs.md).
             printf("@@CAPTURE frs-0x%02X-%s\n", frs, seq);
             fflush(stdout);
             vTaskDelay(pdMS_TO_TICKS(15000));

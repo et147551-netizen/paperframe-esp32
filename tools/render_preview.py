@@ -15,7 +15,7 @@ is what the firmware does.
 A bare invocation previews exactly what the frame ships: the M5GFX pair search against
 epdoptimize's aitjcize calibration. The `epdopt` modes are the ported epdoptimize pipeline,
 which the device does NOT run -- 24 s a photograph against 1.6 s. See
-docs/agents/measurements.md.
+docs/measurements.md.
 
 Output goes next to the input under .scratch/renders/ as <stem>-<mode>.png, at the panel
 palette's ideal RGB values -- so it will look more saturated than the real panel, which

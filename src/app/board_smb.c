@@ -446,7 +446,7 @@ board_smb_err_t board_smb_list_path(const char *path, board_smb_list_what_t what
         }
         // `files` keeps its meaning -- entries of the requested kind that are not . or .. --
         // so a DIRS walk reports directories here. The name stays because every capture and
-        // every figure in docs/agents/measurements.md is written against it, and a FILES walk
+        // every figure in docs/measurements.md is written against it, and a FILES walk
         // is what all of those were.
         s_list_stats.files++;
         if (accept && !accept(ent->name)) {

@@ -5,8 +5,8 @@
 //
 // **The classification here is upstream's, not this project's.** test/test_auto/test_main.c
 // builds an epd_classification_t out of these numbers and hands it straight to
-// epd_auto_suggest(), so a failure is a fault in src/epd_auto.c and cannot be one in
-// src/epd_classify.c. That is also why no pixels and no checksum are here: nothing in the C
+// epd_auto_suggest(), so a failure is a fault in src/core/epd_auto.c and cannot be one in
+// src/core/epd_classify.c. That is also why no pixels and no checksum are here: nothing in the C
 // test looks at an image.
 //
 // Regenerate after changing the generator or updating refs/epdoptimize. Do not hand-edit a
@@ -48,7 +48,7 @@ typedef struct {
     int wanted_stucki;
     // buildLayeredSuggestion adds serpentine: true to every errorDiffusion arm and omits it
     // entirely for quantizationOnly (auto-processing.ts:388-391), so this tracks the inverse of
-    // nearest -- worth a fixture column rather than a comment, because src/epd_auto.c asserts
+    // nearest -- worth a fixture column rather than a comment, because src/core/epd_auto.c asserts
     // the relation rather than deriving it.
     int serpentine;
 } auto_fixture_t;

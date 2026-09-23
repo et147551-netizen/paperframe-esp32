@@ -4,7 +4,7 @@
 // Two things it proves that nothing before it could:
 //
 //   * an image that came off a filesystem, not out of flash. Everything up to
-//     ticket 07 drew src/assets_data.c;
+//     ticket 07 drew src/app/assets_data.c;
 //   * that a card read issued during a refresh waits for the panel instead of being
 //     clocked into it. On internal flash the read never touches SPI2, so that arm is a
 //     smoke test; with a card fitted it is the real thing, and the unguarded case is

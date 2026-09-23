@@ -103,14 +103,14 @@ esp_err_t board_wifi_ap_secure(const char *password);
 //
 // **app_server.c gates the token-bearing captive-portal redirect on this**, and that is the whole
 // reason it exists: handing the API token to whoever joins an OPEN access point is what
-// docs/agents/web-api.md warns against, and a runtime question cannot be got wrong by a flag that
-// reached one file and not another (docs/agents/build-system.md's third trap).
+// docs/web-api.md warns against, and a runtime question cannot be got wrong by a flag that
+// reached one file and not another (docs/build-system.md's third trap).
 bool board_wifi_ap_secured(void);
 
 // --------------------------------------------------------------- the access point's window
 //
 // Ticket 67. **The access point is not a permanent surface any more: it is raised for a window and
-// it takes itself down again.** The operator's reasoning, 2026-09-19: the AP exists for first setup
+// it takes itself down again.** The owner's reasoning, 2026-09-19: the AP exists for first setup
 // and for pushing photographs onto a frame that has no home Wi-Fi, both of which are things somebody
 // does while standing at the frame. A radio that is up for thirty minutes a month can have its 4-way
 // handshake captured for thirty minutes a month, which is the only lever this project has on the

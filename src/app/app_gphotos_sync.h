@@ -1,7 +1,7 @@
 // Google Photos as a second photograph source: the album's LIST is mirrored, and its photographs
 // are fetched one at a time shortly before the slideshow shows them.
 //
-// Ticket .scratch/digital-frame/issues/60, FR-10; the Google Photos mirror plan. The operator's
+// Ticket .scratch/digital-frame/issues/60, FR-10; the Google Photos mirror plan. The owner's
 // ruling of 2026-09-13 replaced a whole-album mirror with this: "ダウンロードの全体ミラーを止め、
 // SMBと同じく都度。但しリスト作成レベルのみミラー可能" -- fetch on demand like the SMB share, and mirror
 // no more than the list.
@@ -12,7 +12,7 @@
 //     photographs' keys are kept in PSRAM and in /data/.gpdir (slot 0) or .gpdirN (slots 1-3),
 //     which are loaded at boot so the slideshow can choose before the network is up. A read that
 //     is not whole, or finds nothing, replaces nothing. The slideshow selects uniformly over the
-//     photographs of every album together (the operator's choice, 2026-09-13).
+//     photographs of every album together (the owner's choice, 2026-09-13).
 //   * ONE PHOTOGRAPH. The slideshow's catalogue epoch (through app_catalog) declares the album
 //     entry it is about to want; this fetches that one photograph, stores it through the SMB
 //     mirror's store path, and keeps at most GPHOTOS_CACHE_FILES of them on /data, oldest first.
@@ -56,7 +56,7 @@ typedef struct {
     uint32_t album_bytes;  // document size of the last read
     uint16_t items;        // photographs in this slot's list
     bool over_cap;         // the album holds more than the list keeps
-    // A NEW link failed and the last good one was put back (the operator's rule of 2026-09-13):
+    // A NEW link failed and the last good one was put back (the owner's rule of 2026-09-13):
     // why, and the HTTP status. Cleared by the next save or the next whole read.
     bool reverted;
     app_gphotos_result_t reverted_result;

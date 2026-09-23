@@ -13,7 +13,7 @@
 // GPIO numbers on working-looking firmware.
 //
 // Why an #error and not a default: `compile_commands.json` omits PlatformIO's build_flags
-// and will tell you a flag did not arrive when it did (docs/agents/build-system.md), so the
+// and will tell you a flag did not arrive when it did (docs/build-system.md), so the
 // only cheap way to know a board was selected is for the build to fail when none was. Every
 // env that builds has selected one.
 //

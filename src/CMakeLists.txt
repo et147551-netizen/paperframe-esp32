@@ -8,7 +8,7 @@ FILE(GLOB_RECURSE app_sources ${CMAKE_SOURCE_DIR}/src/*.c)
 # PlatformIO has its own option for this, `board_build.embed_files`, which produces the
 # same `_binary_<name>_start` symbols. See platformio.ini.
 # The layer directories, all of them, unconditionally. CMake cannot see PlatformIO's
-# build_flags (docs/agents/build-system.md), so it cannot know which board was selected --
+# build_flags (docs/build-system.md), so it cannot know which board was selected --
 # which is why every board's and panel's header basename must be UNIQUE. Two files called
 # `pins.h` would resolve by directory order rather than by the selected board, silently.
 idf_component_register(SRCS ${app_sources}
@@ -18,7 +18,7 @@ idf_component_register(SRCS ${app_sources}
                                     "board/reterminal_e1002"
                                     "app" "entry")
 
-# src/smb_aes_hw.c needs mbedTLS's own headers to see the ESP32 port's aes_alt.h, which is
+# src/app/smb_aes_hw.c needs mbedTLS's own headers to see the ESP32 port's aes_alt.h, which is
 # what turns mbedtls_aes_init() into esp_aes_init() and puts it on the AES peripheral.
 # Without the dependency the file compiles against the generic declarations and the link
 # fails on undefined mbedtls_aes_* -- the hardware symbols are named esp_aes_*. Added with
@@ -28,15 +28,14 @@ target_link_libraries(${COMPONENT_LIB} PRIVATE idf::mbedtls)
 
 # GCC dies with `internal compiler error: Segmentation fault` on IDF's own
 # esp_lcd/rgb/esp_lcd_panel_rgb.c:681, in rgb_panel_draw_bitmap, during `RTL pass: ira`.
-# docs/agents/build-system.md records it as non-deterministic and curable by running the build
-# again -- and
-# on 2026-09-04 it stopped being either: env:photo hit it **14 times in a row**, 4 s apart,
+# docs/build-system.md records it as non-deterministic and curable by running the build
+# again -- and on 2026-09-04 it stopped being either: env:photo hit it **14 times in a row**, 4 s apart,
 # including after its build directory was deleted. Lowering the optimisation level for that
 # one component avoids it, which is consistent with the earlier finding that -O1, -Os and
 # -O0 all did.
 #
 # Scoped to esp_lcd, and safe here because **this project does not use esp_lcd at all** --
-# the EPD driver is src/epd_el040ef1.c on a plain SPI master, and nothing links an
+# the EPD driver is src/panel/el040ef1/epd_el040ef1.c on a plain SPI master, and nothing links an
 # esp_lcd panel. So this cannot affect any measurement: it changes the code generation of a
 # component that is compiled and then never called.
 if(TARGET __idf_esp_lcd)
@@ -82,7 +81,7 @@ if(TARGET __idf_sahlberg__libsmb2)
     # Ticket 33: send libsmb2's per-block AES to the S3's AES peripheral. The component
     # re-runs the whole key expansion for every 16-byte block (lib/aes.c:444-456), which
     # measured 79.9 us per block and 82 % of what a 4 KB signed read costs. See
-    # src/smb_aes_hw.c for why this is a wrap and not a patch, and for how the run says
+    # src/app/smb_aes_hw.c for why this is a wrap and not a patch, and for how the run says
     # whether the wrap actually took -- a green build here does not.
     #
     # One token, deliberately: the two-token case above is why.

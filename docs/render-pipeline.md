@@ -37,7 +37,7 @@ colour index straight into the packed frame with `epd_pack_solid()` (`src/core/e
 no dither, no error diffusion and no fit arithmetic runs. Ten full-screen flats,
 `K W R W Y W G W B W`, ordered in `src/core/epd_maint_course.c`.
 
-That is the point rather than a shortcut: the operator asked for a service mode that "ignores the
+That is the point rather than a shortcut: the owner asked for a service mode that "ignores the
 palette" so that a person looking at the glass is looking at the ink rather than at a colour-reduction
 decision. **So do not route it through anything described below, and do not "fix" it to use the palette
 — a white flat here is `EPD_COLOR_WHITE` and not the current palette's nearest match to (255,255,255),
@@ -51,7 +51,7 @@ is the existing FR-5.7 path unchanged.
 ## The palette is a user setting, and epdoptimize's calibration is the default
 
 **The frame's own default palette is `boeber` — "Calibrated - brighter primaries" — since
-2026-09-06, by operator instruction.** That is `apply_defaults()` in `src/app/app_settings.c`, and it is
+2026-09-06, by owner instruction.** That is `apply_defaults()` in `src/app/app_settings.c`, and it is
 **not** the same thing as `EPD_RENDER_DEFAULT`, which is still `EPD_PALETTE_EPDOPT_AITJCIZE` at full
 tone compression as of 2026-09-05 (ticket 19 had chosen `EPD_PALETTE_MANUAL`). The two are now
 deliberately different: `EPD_RENDER_DEFAULT` is the renderer's fallback for an out-of-range id and
@@ -66,7 +66,7 @@ Why a setting: no palette suits every picture, and the difference is plainly vis
 *calibrated* palette sends 17-22 % of a photograph to green — this panel's green really is a
 dark desaturated colour, and dark brown lands nearer to it than to black — while the
 uncalibrated `original` sends 1.3 % there and 41.3 % to black instead, which crushes shadow
-detail. `docs/agents/measurements.md` has the scans and the histograms.
+detail. `docs/measurements.md` has the scans and the histograms.
 
 **Adding a palette is one entry in `PALETTE_TABLE` in `epd_dither.c`** and it then appears in
 NVS, the API and the interface: `GET /api/mode/mode_1/config` returns the list as `palettes`,
@@ -81,7 +81,7 @@ is an addition to FR-8's nine, not one of them — the stock firmware has no suc
 `refs/epdoptimize/`) — three stages on a whole canvas, byte-for-byte verified against the
 library, and it is host-only.** Only the *palette* was adopted; the frame quantises with
 M5GFX's row-wise paths. Two measurements from 2026-09-05 are why, both in
-`docs/agents/measurements.md`:
+`docs/measurements.md`:
 
 - **Cost.** The ported pipeline is **24.0 s** a photograph against the row path's **1.62 s**,
   and it starves CPU 0 for the duration, so the task watchdog fires and httpd stops answering.
@@ -89,7 +89,7 @@ M5GFX's row-wise paths. Two measurements from 2026-09-05 are why, both in
   without finishing**. Both figures are double-precision arithmetic on a single-precision FPU;
   the fast variant has no `pow()` at all and is still 15× the row path.
   **Both figures are from 160 MHz with a 32-byte cache line and are stale by about a third** —
-  see the clock-and-cache section of `docs/agents/build-system.md`; the ratio is what the
+  see the clock-and-cache section of `docs/build-system.md`; the ratio is what the
   argument rests on and the ratio holds.
 - **Benefit.** The palette, and only the palette. The pipeline's own contribution was never
   isolated, and at 24 s it is not worth isolating.
@@ -101,14 +101,14 @@ deliberately **not** a parity port and must never be given one's acceptance test
 `test/test_adjust/` compares it to the double implementation within stated tolerances and
 `test/test_epdopt/` keeps that one pinned to the library, and the chain is what makes "close to
 upstream" checkable without claiming "identical". Two things came out of building it and both are
-in `docs/agents/measurements.md`: `-O2` made it *slower*, and `fmaxf`/`fminf` are external calls
+in `docs/measurements.md`: `-O2` made it *slower*, and `fmaxf`/`fminf` are external calls
 that GCC cannot inline without `-ffast-math`, which was 40 % of one stage.
 ## The auto flow is wired in, ON by default since 2026-09-06, and has run on hardware in both envs
 
 The demo site's *actual* default is not a preset: it classifies each picture and chooses that
 picture's settings. All of it is now on the device behind the `auto_adjust` setting, which is
-**on by default since 2026-09-06**: the operator looked at the result on the glass and decided
-these settings are the ones to ship. That decision is the operator's own visual judgement rather
+**on by default since 2026-09-06**: the owner looked at the result on the glass and decided
+these settings are the ones to ship. That decision is the owner's own visual judgement rather
 than the systematic flatbed sweep the project index used to ask for, so it settles *which default to ship*
 without producing a per-picture-kind comparison — but the default is now the arm that has to be
 argued **against**, not for.
@@ -139,7 +139,7 @@ simply "always off" either, because when the plan asks for no range compression 
 pixel art) the row path's copy is the only one there is and ticket 19 measured that compression as
 the win. Exactly one, always. A host test pins it rather than a comment.
 
-**Speed is not being asked for at this stage** (operator, 2026-09-05). That does not erase the
+**Speed is not being asked for at this stage** (owner, 2026-09-05). That does not erase the
 plan's pre-registered 3 000 ms of added work per photograph — a pre-registration edited after the
 fact is not one — it changes the consequence: exceeding it is a **finding to report**, not a
 trigger to undo the wiring, and the import-time cache is not built on a timing figure alone. It
@@ -179,7 +179,7 @@ time, and the 476 796 B scratch coming out of PSRAM with 104 bytes of internal b
 movement in `int_largest` or `dma_largest`.
 
 **Before building any further region arm, read the geometry table in
-`docs/agents/measurements.md`.** A source *wider* than 2:3 is width-limited, so it produces a matte
+`docs/measurements.md`.** A source *wider* than 2:3 is width-limited, so it produces a matte
 and a **contiguous** region: it looks like it tests striding and does not. Only a source taller than
 2:3 at rotation 0 reaches the strided form, and on `env:frame` that needs `orientation=landscape`
 first — which **did not work before 2026-09-06**, because the API's `orientation` strings were
@@ -191,7 +191,7 @@ drawn rectangle when the composition is a single untouched layer. **The two cont
 the same fit** — `fitImageToContainer()` caps its scale at `1` and `epd_fit_centre()` does not — so
 it crops only when the drawn rectangle reaches exactly one edge of the canvas, which is where the
 device's fit reproduces the browser's. Do not widen that condition without re-reading why it is
-there; what the matte did to the classification is measured in `docs/agents/measurements.md`.
+there; what the matte did to the classification is measured in `docs/measurements.md`.
 
 **The Web-UI preview now quantises exactly as the device does, and the numbers it needs come from
 the device**: `GET /api/mode/mode_1/config` serves `palettes[].match`, `palettes[].tone` and
@@ -201,7 +201,7 @@ overlay rather than guessing. Two rules follow.
 - **Run `python tools/ink_preview_parity.py <config.json> --self-check` after touching either
   quantiser.** It extracts the page's own functions and compares them index-for-index against
   `epd_dither.c`, so it covers the page, the firmware and the route at once. It had been silently
-  wrong on 18 % of a photograph's pixels; `docs/agents/measurements.md` has how, and the
+  wrong on 18 % of a photograph's pixels; `docs/measurements.md` has how, and the
   perturbations that prove the check can fail.
 - **With `dither_diffuse` on (the default) the preview runs the device's own Floyd-Steinberg**
   (`quantizeToEpdPaletteDiffused()`, since 2026-09-22) — tone compression, then serpentine
@@ -212,7 +212,7 @@ overlay rather than guessing. Two rules follow.
 - **It matches against the selected palette and draws in that palette's own colours**, as
   epdoptimize's demo draws its "Dithered" canvas. Until 2026-09-22 every palette was drawn in the
   one measured table (`preview_rgb`, `EPD_PALETTE_MEASURED`), the green-hair retraction as a rule;
-  the operator judged that preview dark and muddy and asked for the demo's behaviour, and the
+  the owner judged that preview dark and muddy and asked for the demo's behaviour, and the
   `preview_rgb` field went with it. The consequence to keep in mind: comparing two palettes'
   previews now shows colour differences as well as index differences, so a preview comparison
   is not an index comparison — use `tools/ink_preview_parity.py` or the host renderer for that.
@@ -221,7 +221,7 @@ The auto flow is still not previewed, and the page says so when it is on. Since 
 is true of the error diffusion, with its own note and its own condition.
 ## The quantiser is a setting too, and error diffusion is the demo's
 
-**`dither_diffuse` (2026-09-06, and **default ON** by the operator's decision the same day) replaces
+**`dither_diffuse` (2026-09-06, and **default ON** by the owner's decision the same day) replaces
 M5GFX's row-wise pair search with
 Floyd-Steinberg error diffusion**, which is what the epdoptimize demo quantises with. `src/core/epd_diffuse.c`
 is that diffusion in integers; `src/core/epd_epdopt.c`'s `epd_epdopt_diffuse()` is the double-precision
@@ -259,7 +259,7 @@ it, because 0.6 s did not need a yield point.
 
 **Separate from `auto_adjust` on purpose, and they stay separate.** Both move the render towards the
 demo's default, so folded together a visual difference could not be attributed; apart there are four
-combinations. The operator's 2026-09-06 judgement picked one of those four to ship — it did not merge
+combinations. The owner's 2026-09-06 judgement picked one of those four to ship — it did not merge
 the two settings, and the other three combinations are still reachable, which is the point. `tools/render_preview.py --diffuse` draws all four on the host.
 
 The error-diffusion plan is where this came from, and two of its predictions were wrong in
@@ -357,7 +357,7 @@ where **`base_rot` is the setting as `app_display` received it** and `rot` is wh
 `base_rot=1` then `base_rot=0`, following the POSTs exactly. Either read `base_rot`, or turn
 `auto_rotate` off first and then `region=` means something.
 
-**`auto_rotate` (2026-09-09, and **default ON** by operator decision) turns a picture 90° at
+**`auto_rotate` (2026-09-09, and **default ON** by owner decision) turns a picture 90° at
 DRAW time when its orientation disagrees with `rotation` and it is far enough from square**
 (ticket `51`). Measured on hardware the same day, eight fixtures, both arms: 4:3 goes **50 % →
 89 %** of the panel, 3:2 **45 % → 99 %**, 16:9 **37 % → 83 %**, and 5:4, 1:1 and both portrait
@@ -467,14 +467,14 @@ Four things about it that are order, not layout, and each would be silent if wro
   reuses the same struct for the region. It used to be computed twice from the same arguments with a
   comment apologising for it, which was harmless only while the answer was "centred".
 - **The band lies along the bottom of the GLASS, or there is none.** That is the rule after the
-  operator looked at five samples on 2026-09-19 and rejected two of them: the band had gone wherever
+  owner looked at five samples on 2026-09-19 and rejected two of them: the band had gone wherever
   the leftover was, which put it down the panel's right edge for a 9:16 source and across its top for
   a turned 4:3 one. Both read as the picture having been pushed aside. So `epd_band_plan()` asks
   `epd_canvas_physical_rect()` which logical edge is the glass's bottom, aligns the photograph to the
   opposite one, and **when the leftover cannot lie along the bottom at all there is no band and the
   fit stays centred** -- a 9:16 photograph now draws exactly as it did before any of this existed.
   An earlier revision of this file recorded the varying edge as a decision to keep; that was reversed
-  the same day, by the operator, after seeing it.
+  the same day, by the owner, after seeing it.
 - **Logical is not physical, and that is the trap.** `epd_band` works in logical coordinates like the
   rest of the pipeline, so on a turned canvas the band along the glass's bottom is a logically
   VERTICAL strip whose text is drawn `rot90` -- and the canvas's own rotation brings it back upright
@@ -484,7 +484,7 @@ Four things about it that are order, not layout, and each would be silent if wro
   constant: `epd_band_large_scale()` gives 4 wherever it fits and 3 or 2 where it does not, so the
   reTerminal E1002's 30 px leftover now carries a line where it used to draw nothing. Scale 1 is not a
   candidate -- 7 px is about 1 mm here.
-- **It is ONE line, filled ALONG the band, since 2026-09-19** — the operator's mockup. Content sits
+- **It is ONE line, filled ALONG the band, since 2026-09-19** — the owner's mockup. Content sits
   side by side in up to four segments with a divider rule between, justified space-between, and **a
   band thicker than one line keeps its white rather than growing the type.** So a 400x200 band and a
   400x67 band draw exactly the same thing, which is the decision and not an under-fill.
@@ -508,7 +508,7 @@ Four things about it that are order, not layout, and each would be silent if wro
   no outcome in the two commonest bands. **Since 2026-09-22 the E1002's 800 px band shows the years
   (`7 YEARS AGO`) and drops the country**: the battery icon shrank to two thirds of the line height
   (`epd_band.c`'s `icon_thick()`, 40 px long at scale 4 against 63 before), the space it freed admits
-  `ago`, and the country is only ever given what is left. The operator chose the years when asked.
+  `ago`, and the country is only ever given what is left. The owner chose the years when asked.
   **The icon's fill is red at 33 % or less** (`EPD_BAND_BATTERY_LOW_PCT`, matching the web page); pure
   red lands on the red ink on every palette through the nearest passes, but with `dither_diffuse`
   off `spectra6` speckles it with yellow — `test_band` has the measurement. Ticket `64` has the arithmetic; `app_smb_sync.c` writes
@@ -523,7 +523,7 @@ Four things about it that are order, not layout, and each would be silent if wro
   carry a GPS position** (`.scratch/digital-frame/gps_scan.py`, run with a positive control), so no city
   can appear until a photograph that has one arrives. Check the source's EXIF before debugging the
   lookup. Ticket `64` has both the arm and the generator's own two traps.
-- **A city too long for the band is CUT and the excess discarded** (operator, 2026-09-20), with no
+- **A city too long for the band is CUT and the excess discarded** (owner, 2026-09-20), with no
   ellipsis. **The city is what is cut and the capture date never is** -- half of `19-08-14` is
   unreadable where half a place name is merely a shorter word -- so `RIO DE JANEIRO 19-08-14` becomes
   `RIO DE 19-08-14` on a 400 px band and stays whole on 800 px. A cut never lands on a space, because
@@ -532,7 +532,7 @@ Four things about it that are order, not layout, and each would be silent if wro
   room and the photograph said nothing at all. The accepted consequence is that a truncated name is
   indistinguishable from a short one, so `SAN FR` reads as a place; `# band seg0` in the console is
   where the full string can be checked.
-- **The photograph is never made smaller for the band**, which is the operator's first requirement:
+- **The photograph is never made smaller for the band**, which is the owner's first requirement:
   `epd_band_plan()` returns `epd_fit_centre()`'s own width and height in every case and only x and y
   move. `test_band` asserts that across seven sources at both rotations rather than arguing it once.
 - **There WAS a rule that chose the side from the picture's brightness, and it is gone** -- forcing
@@ -546,12 +546,12 @@ Four things about it that are order, not layout, and each would be silent if wro
 
 ## The playback ORDER is a setting too, and it is a permutation rather than a draw
 
-**`slideshow_random` (2026-09-06, and **default ON** by the operator's decision the same day) walks a
+**`slideshow_random` (2026-09-06, and **default ON** by the owner's decision the same day) walks a
 shuffled permutation instead of filename order.** It was off because FR-5.4's order *is* filename
 order, so shipping it on is a deliberate departure from that requirement rather than an oversight. `smb_catalog_shuffle()` is the
 permutation and lives in the catalogue module so `test/test_catalog/` can pin its bijection on the
 host. Four rules, each of which someone will be tempted to simplify away — the accounts, the
-measurements and the verification are in ticket `37` Phases 2-3 and `docs/agents/measurements.md`:
+measurements and the verification are in ticket `37` Phases 2-3 and `docs/measurements.md`:
 
 - **Not `esp_random() % count`.** Independent draws revisit and starve, which answers "the frame
   shows the same pictures" with "some pictures three times before others once".

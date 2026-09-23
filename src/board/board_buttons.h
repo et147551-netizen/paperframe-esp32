@@ -5,7 +5,7 @@
 // board_buttons.c, which is board-independent.
 //
 // **The buttons are named by position, not by letter**, because the M5Paper Color's case
-// carries no A/B/C markings and the operator settled the layout on the unit on 2026-09-03.
+// carries no A/B/C markings and the owner settled the layout on the unit on 2026-09-03.
 // Each board maps its own three physical buttons onto these three roles in its own
 // board_buttons_*.c: TOP is the one that carries the special action (the orientation toggle
 // and the 5 s access-point hold), UP and DOWN move through the pictures.

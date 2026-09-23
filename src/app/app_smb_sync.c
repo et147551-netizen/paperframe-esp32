@@ -117,12 +117,12 @@ static char s_folder_list[BOARD_SMB_PATH_SIZE];
 //
 // Built ONE FOLDER PER RUN, round-robin through the list, because a listing costs 142.5 bytes
 // per directory entry and env:frame can afford a few hundred entries but not a few thousand
-// (docs/agents/measurements.md, 2026-09-06).
+// (docs/measurements.md, 2026-09-06).
 //
 // The round-robin cursor is NOT a static here: it lives in the catalogue and is persisted in
 // /data/.smbdir's header, because a cursor that resets on boot means a frame which restarts
 // often never advances past folder 0. That is not hypothetical -- it happened twice on
-// 2026-09-06, and the second time was the operator rebooting the board.
+// 2026-09-06, and the second time was the owner rebooting the board.
 static smb_catalog_t *s_catalog;
 static char *s_cat_arena;
 
@@ -627,7 +627,7 @@ void app_smb_sync_sidecars_prepare(bool sweep_orphans)
 // Nothing is written at all when neither line has content, so an EXIF-less source costs no file.
 //
 // **The coordinates are geocoded here and then discarded.** That is "derive before you retain"
-// (operator, 2026-09-12) applied where it actually bites: a card holding four thousand
+// (owner, 2026-09-12) applied where it actually bites: a card holding four thousand
 // photographs' GPS tags is a different object from one holding their city names, and the frame
 // only ever needed the name. The table it looks the name up in is flash-resident and public
 // domain (src/core/geo_city.h), so this costs no internal RAM and reaches no network.
@@ -2119,7 +2119,7 @@ static void window_task(void *arg)
     // a run that fetches nothing -- connect + list + one stat() per mirrored file -- and that
     // claim was arithmetic, not a measurement. A window with plan=0 prints its own answer
     // here. `httpd_down` spans the app_server_stop() to app_server_start() pair and is the
-    // number the operator's decision was about.
+    // number the owner's decision was about.
     ESP_LOGI(TAG,
              "window timing: connect=%lld plan=%lld fetch=%lld catalogue=%lld finish=%lld "
              "httpd_down=%lld ms plan_count=%u",

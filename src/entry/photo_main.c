@@ -125,7 +125,7 @@ static const epd_render_t RENDER_EPDOPT_NO_TONE = {EPD_PALETTE_EPDOPT_AITJCIZE, 
 // EPD_ADJUST_BALANCED with **one field moved** -- the saturation. Written out rather than copied
 // because C cannot initialise one const object from another at file scope, and the fields are
 // worth being able to diff by eye: every one below is EPD_ADJUST_BALANCED's except `saturation`,
-// which is 0.12 (upstream's `linearAdjustmentFromMultiplier(1.12)`, what src/epd_auto.c gives a
+// which is 0.12 (upstream's `linearAdjustmentFromMultiplier(1.12)`, what src/core/epd_auto.c gives a
 // photograph whose lumaStdDev is 42 or less).
 static const epd_adjust_t ADJUST_SATURATED = {
     .palette = EPD_PALETTE_EPDOPT_AITJCIZE,
@@ -173,7 +173,7 @@ static const shot_t SHOTS[] = {
     //
     // **`adj-float` above took the cheap path and nobody noticed for a day.**
     // EPD_ADJUST_BALANCED has a neutral saturation, so epd_adjust_tone() takes its
-    // three-LUT-lookups branch and reported 66.7 ms. src/epd_auto.c asks for a *non-neutral*
+    // three-LUT-lookups branch and reported 66.7 ms. src/core/epd_auto.c asks for a *non-neutral*
     // saturation for six of the seven image kinds -- including `photo` when lumaStdDev <= 42,
     // which is an ordinary photograph -- and every one of those takes the HSL round trip
     // instead: three divisions, an fmodf, a floorf and two fabsf per pixel. This arm is that
@@ -186,7 +186,7 @@ static const shot_t SHOTS[] = {
      &RENDER_EPDOPT_NO_TONE, EPD_FRS_STOCK, &ADJUST_SATURATED, NULL, false},
 
     // classify -> suggest -> all five stages, each timed separately, on the photograph the two
-    // arms above use. This is what src/app_display.c runs per render when the setting is on, so
+    // arms above use. This is what src/app/app_display.c runs per render when the setting is on, so
     // it is the figure the plan's 3 000 ms pre-registration is about -- and it is the only arm
     // here whose settings come from the picture rather than from a table.
     //
@@ -265,7 +265,7 @@ static const shot_t SHOTS[] = {
     // shot and scanned on 2026-09-05 and does not need another refresh
     // (.scratch/captures/photo-epdopt-20260905-142247.log and -fast-20260905-145215.log).
     // A capture sized to this group exits non-zero because @@DONE never arrives, which is
-    // the form docs/agents/hardware-runs.md documents and is not a failure.
+    // the form docs/hardware-runs.md documents and is not a failure.
     //
     // Same photograph, same algorithm, same run: only the palette moves. `pal-manual` is
     // what the frame drew until 2026-09-05 and `pal-aitjcize` is what it draws now, so this
@@ -280,7 +280,7 @@ static const shot_t SHOTS[] = {
     //
     // The ported epdoptimize pipeline is deliberately **not** here as a *shot*. It costs 24.0 s a
     // photograph against this path's 1.62 s and starves CPU 0 while it runs; its scans from
-    // the 14:52 run are the record, and src/epd_epdopt.c is host-only now. Both of those figures
+    // the 14:52 run are the record, and src/core/epd_epdopt.c is host-only now. Both of those figures
     // are 160 MHz / 32-byte-cache-line numbers -- see the `adj-*` group above, which is where its
     // first two stages are timed against the single-precision rewrite in the current build.
     {"pal-aitjcize", asset_test_photo_jpg, &asset_test_photo_jpg_len, DITHER_QUALITY, 0,
@@ -434,9 +434,9 @@ static void time_adjust_stages(const shot_t *s, int runs)
 // ------------------------------------------------------------ the integer error diffusion
 //
 // What this arm settles, and what it cannot. The recorded cost of the double implementation is
-// 11.2 s a photograph at 160 MHz with a 32-byte cache line (docs/agents/measurements.md:181-190,
+// 11.2 s a photograph at 160 MHz with a 32-byte cache line (docs/measurements.md:181-190,
 // from 23 966 ms with diffusion against 12 826 ms without in one capture), which scales to ~7.4 s
-// on this build by the measured 0.666 clock-and-cache factor. src/epd_diffuse.c removes the
+// on this build by the measured 0.666 clock-and-cache factor. src/core/epd_diffuse.c removes the
 // soft-float multiply and the twelve isfinite+floor calls per pixel that measurements.md names as
 // the cost, and test/test_diffuse pins it bit-identical to the library. **How much that is worth
 // in milliseconds is not derivable from any of it**, which is what these arms are for.
@@ -588,7 +588,7 @@ static bool time_auto_flow(const shot_t *s, const decoded_t *dec, epd_auto_plan_
 
         // The six stages, in epd_flow.h's order. This arm used to write the sequence out itself --
         // it was one of three hand-written copies, and it is the one whose per-stage figures
-        // docs/agents/measurements.md quotes, which is why epd_flow_apply() reports them rather
+        // docs/measurements.md quotes, which is why epd_flow_apply() reports them rather
         // than only running the stages. Same six numbers, same order, pinned by test/test_flow.
         const epd_flow_region_t region = {
             .rgb = origin,
@@ -764,7 +764,7 @@ void app_main(void)
 
     // ~472 KB of PSRAM for the classifier and the white-preservation bits. Taken once here rather
     // than per shot so the allocation is not inside anything being timed, and reported as a
-    // number: this is the memory cost src/app_display.c pays the first time the setting is on.
+    // number: this is the memory cost src/app/app_display.c pays the first time the setting is on.
     if (!auto_scratch_alloc()) {
         printf("# auto: PSRAM allocation failed; the auto-full shot will be skipped\n");
     }
@@ -793,7 +793,7 @@ void app_main(void)
         }
 
         // The auto arm decides its own quantiser and its own tone compression, so the render cfg
-        // is built here rather than taken from the table -- exactly as src/app_display.c does it.
+        // is built here rather than taken from the table -- exactly as src/app/app_display.c does it.
         dither_mode_t mode = s->mode;
         epd_render_t auto_render = {EPD_PALETTE_EPDOPT_AITJCIZE, EPD_TONE_FULL};
         const epd_render_t *render = s->render;

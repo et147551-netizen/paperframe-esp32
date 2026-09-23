@@ -26,7 +26,7 @@ static const char *TAG = "auth";
 #define TOKEN_BYTES 16
 
 // WPA2's floor, which board_wifi_ap_secure() enforces. The AP password is exactly this long since
-// ticket 66 -- the operator asked for the minimum, because it is typed by hand -- so a change to the
+// ticket 66 -- the owner asked for the minimum, because it is typed by hand -- so a change to the
 // pairing code's length must not silently take the passphrase under it.
 #define WPA2_MIN_PASSPHRASE 8
 _Static_assert(PAIR_CODE_LEN >= WPA2_MIN_PASSPHRASE,
@@ -155,7 +155,7 @@ static void init_ap_password(void)
             ESP_LOGI(TAG, "ap password loaded from NVS");
             return;
         }
-        // Ticket 66: the operator asked for the shortest typeable password, so a device provisioned
+        // Ticket 66: the owner asked for the shortest typeable password, so a device provisioned
         // before that carries 16 hex characters and is re-keyed ONCE -- after which the shape check
         // passes and this never fires again. **Said out loud because it is the only thing in this
         // module that invalidates something outside the device: a phone that had joined this access
@@ -199,9 +199,8 @@ esp_err_t app_auth_init(void)
         return ESP_OK;
     }
 
-    // A build seed, for the bench. This PC cannot join the frame's access point at all
-    // (the location permission netsh needs is denied by group policy), so it cannot read
-    // a pairing QR, so an unattended run here would have no way to learn a randomly
+    // A build seed, for the bench. The bench PC cannot join the frame's access point
+    // from a command line, so it cannot read a pairing QR, so an unattended run here would have no way to learn a randomly
     // minted token. FRAME_API_TOKEN comes out of git-ignored platformio_local.ini,
     // exactly as FRAME_WIFI_SSID does in frame_main.c -- and like it, it is a fallback
     // for a device with nothing stored, never an override.

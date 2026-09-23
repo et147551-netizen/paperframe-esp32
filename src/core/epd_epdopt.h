@@ -27,13 +27,13 @@
 // with epd_dither.c. This file exists for tools/render_preview.py and test/test_epdopt, and
 // because it is what makes the palettes' provenance checkable.
 //
-// **That is still true of this file and no longer true of its first two stages.** src/epd_adjust.c
+// **That is still true of this file and no longer true of its first two stages.** src/core/epd_adjust.c
 // is tone mapping and range compression rewritten in single precision for the device: 668.9 ms
 // against this file's 8 259 ms in the same build. **Both figures are for a neutral saturation**,
 // which is what EPD_EPDOPT_BALANCED_FAST and EPD_ADJUST_BALANCED both ask for and which takes the
 // float version's cheap LUT branch. With a non-neutral saturation the float pair is 1 337 ms
 // (measured 2026-09-05), because the tone stage then does an HSL round trip per pixel; that is the
-// figure to compare against if the settings came from src/epd_auto.c rather than from the preset. It is a separate module rather than an edit here
+// figure to compare against if the settings came from src/core/epd_auto.c rather than from the preset. It is a separate module rather than an edit here
 // precisely because this one's acceptance test is byte equality against the JavaScript, and a
 // float rewrite cannot pass that. **Do not "optimise" anything below.** Every figure in this
 // header predates 2026-09-05 and was taken at 160 MHz with a 32-byte data cache line; they are
@@ -154,7 +154,7 @@ extern const epd_epdopt_t EPD_EPDOPT_BALANCED;
 // chip ran at that day. The frame therefore quantises with epd_dither.c; only epdoptimize's
 // *palette* was adopted. Ticket 32.
 //
-// This config is also the timing reference for src/epd_adjust.c, which is these two stages in
+// This config is also the timing reference for src/core/epd_adjust.c, which is these two stages in
 // single precision: `env:photo`'s `adj-double` arm runs `epd_epdopt_tone_map()` and
 // `epd_epdopt_range_compress()` with exactly these settings, so the two implementations are
 // compared on one photograph in one build rather than across two sessions. 8 259 ms against

@@ -1,6 +1,6 @@
 // Firmware updates without USB: the writer, the board check and the rollback. Ticket 61.
 //
-// The operator's choices of 2026-09-22, which this file is the whole of:
+// The owner's choices of 2026-09-22, which this file is the whole of:
 //
 //   * AN IMAGE IS SIGNED with ESP-IDF's own RSA-3072 scheme (CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT)
 //     and esp_ota_end() refuses one that does not verify. The trusted key is the one the RUNNING
@@ -10,8 +10,8 @@
 //     nothing about which board an image is for. Each image carries a board identity right after its
 //     esp_app_desc_t, and one naming the other board is refused before the boot slot changes.
 //   * NO VERSION ORDER. Any signed image for this board is accepted, older ones included: the
-//     operator's answer to "a bad release" is to publish the previous one, and fw_version is not
-//     monotonic anyway (docs/agents/build-system.md).
+//     owner's answer to "a bad release" is to publish the previous one, and fw_version is not
+//     monotonic anyway (docs/build-system.md).
 //   * A NEW IMAGE IS ON TRIAL (CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE) until app_ota_tick() sees the
 //     web server up and the station on the network, APP_OTA_VALID_AFTER_S into the boot. A reset
 //     before that boots the previous slot; no verdict by APP_OTA_GIVE_UP_S rolls back on purpose.

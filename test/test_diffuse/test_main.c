@@ -1,4 +1,4 @@
-// Is src/epd_diffuse.c's integer Floyd-Steinberg the same function as epdoptimize's?
+// Is src/core/epd_diffuse.c's integer Floyd-Steinberg the same function as epdoptimize's?
 //
 // Run: ~/.platformio/penv/Scripts/pio.exe test -e native
 //
@@ -6,7 +6,7 @@
 // by running epdoptimize itself (tools/epdopt_reference.mjs) and its stages are cumulative, so
 // `after_range` is exactly the input the diffusion sees and `after_diffuse` is exactly what the
 // JavaScript produces from it. Reusing that header means this suite does not inherit any mistake
-// src/epd_epdopt.c might contain, and it is why the comparison here can be exact rather than
+// src/core/epd_epdopt.c might contain, and it is why the comparison here can be exact rather than
 // tolerance-based: epd_diffuse.h's argument is that the integer form is bit-identical, and a
 // tolerance would hide the one thing worth knowing.
 //

@@ -17,7 +17,7 @@
 //   * the sequencing switch, the BUSY budgets and the probe hooks. EPD_SEQ_STOCK /
 //     EPD_SEQ_BUSY exist because ticket 09 MEASURED the difference on the EL040EF1 (597 ms
 //     per refresh, twice, an hour apart) and EPD_SEQ_STOCK is what every figure in
-//     docs/agents/measurements.md is compared against. They are that panel's, so they stay
+//     docs/measurements.md is compared against. They are that panel's, so they stay
 //     in its own header and only its own measurement entry points reach for them.
 //   * any timing. There is no refresh duration, FRS value or colour claim in this file.
 //     Those are per panel and per measurement session.

@@ -176,7 +176,7 @@ esp_err_t board_pm1_gpio_read_all(uint8_t *bits);
 //
 // **WRITING IS STILL UNVERIFIED, and there is no board_rtc_write() to verify.** Ticket 41
 // deliberately did not add one: a wrong write on the PM1's shared I2C bus is a different risk
-// class from a wrong read, and it needs the operator present. So the wall clock this board
+// class from a wrong read, and it needs the owner present. So the wall clock this board
 // reports is not the system clock — app_clock.c sets that from SNTP and never touches these
 // registers.
 //

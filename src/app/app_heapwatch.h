@@ -11,7 +11,7 @@
 //
 // **There is no task here.** app_heapwatch_sample() is called from board_led.c's led_task, which
 // already ticks every 20 ms. An instrument for internal-RAM scarcity that cost 2 KB of internal
-// RAM for its own stack would be measuring itself, and docs/agents/board-and-storage.md records
+// RAM for its own stack would be measuring itself, and docs/board-and-storage.md records
 // that two small tasks were once enough to make httpd_start() return ESP_ERR_HTTPD_TASK.
 //
 // **What that borrowing costs, stated because it bounds every conclusion drawn from this:** the

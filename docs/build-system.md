@@ -239,9 +239,9 @@ gave 1.5× on everything CPU-bound plus 9-27 % on anything touching PSRAM — th
 went **1 660 → 1 084 ms** — at no cost in internal RAM, because a cache *line* is not a cache
 *size*. `-O2` was measured too and **rejected**: net 4 % slower on the adjustment stages.
 **Every CPU-bound figure in this repository taken before that date is stale**, including the
-1 618 ms row path and the 24.0 s pipeline quoted in `docs/agents/render-pipeline.md`; the
+1 618 ms row path and the 24.0 s pipeline quoted in `docs/render-pipeline.md`; the
 panel-side numbers are not, and
-`docs/agents/measurements.md` has the evidence for that distinction along with what each arm's
+`docs/measurements.md` has the evidence for that distinction along with what each arm's
 apparatus check was.
 
 So **do not derive a figure by subtracting two of them.** 24.0 s (the 160 MHz era) minus 8.259 s

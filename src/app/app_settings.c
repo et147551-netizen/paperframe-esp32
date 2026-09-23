@@ -98,7 +98,7 @@ static const char *const KEY_GPHOTOS_GOOD[APP_SETTINGS_GPHOTOS_SLOTS] = {
 // A device that has been configured already keeps its stored name: this is a default, and defaults
 // are only read where NVS has no value.
 //
-// **AND IT CARRIES THE UNIT'S OWN SIX HEX DIGITS, like the softAP's name** (operator, 2026-09-17):
+// **AND IT CARRIES THE UNIT'S OWN SIX HEX DIGITS, like the softAP's name** (owner, 2026-09-17):
 // `paperframe-a1b2c3`, from `board_wifi_unit_id()`, the same three MAC bytes the SSID is written
 // from. A bare product name made every frame answer to one `.local`, so two on a bench collided --
 // which is what both of these did as `papercolor` before it, one shadowing the other with no
@@ -118,7 +118,7 @@ static const char *const KEY_GPHOTOS_GOOD[APP_SETTINGS_GPHOTOS_SLOTS] = {
 // Ticket 68. 0 = Sunday .. 6 = Saturday, 7 = never, so MAX is the "never" code and not a day.
 #define MAINT_DAY_NEVER 7
 #define MAINT_DAY_MAX MAINT_DAY_NEVER
-// Monday, arbitrarily. The operator said to default to one day and make it a setting rather than
+// Monday, arbitrarily. The owner said to default to one day and make it a setting rather than
 // spend a question on which; anything in 0..6 would do.
 #define MAINT_DAY_DEFAULT 1
 
@@ -130,7 +130,7 @@ static const char *const KEY_GPHOTOS_GOOD[APP_SETTINGS_GPHOTOS_SLOTS] = {
 #define CHARGE_LIMIT_OFF 0
 #define CHARGE_LIMIT_CAP 80
 #define CHARGE_LIMIT_FULL 100
-// The operator's choice, 2026-09-20, against 「時々は無給電で使う」.
+// The owner's choice, 2026-09-20, against 「時々は無給電で使う」.
 #define CHARGE_LIMIT_DEFAULT CHARGE_LIMIT_CAP
 
 static bool charge_limit_valid(int pct)
@@ -284,14 +284,14 @@ static void apply_defaults(app_settings_t *s)
     s->slideshow_random = true;
     s->slideshow_seed = 0;  // "not yet minted"; app_slideshow mints one on first use
     s->smb_on_demand = false;
-    // ON by operator decision, 2026-09-09, in the same breath as asking for the hardware
+    // ON by owner decision, 2026-09-09, in the same breath as asking for the hardware
     // verification -- so this default is shipping AHEAD of its own measurements, which is
     // the opposite way round from auto_adjust and dither_diffuse (both judged on the glass
     // first). What that means for whoever reads this next: the arm to argue is now OFF, and
     // ticket 49's hardware section is the evidence that has to exist rather than evidence
     // that already did.
     s->smb_resize = true;
-    // ON by operator decision, 2026-09-09, chosen with the 1.3 threshold in the same
+    // ON by owner decision, 2026-09-09, chosen with the 1.3 threshold in the same
     // breath. Like smb_resize above this ships ahead of its own hardware evidence, so the
     // arm to argue is OFF; ticket 51 is where that evidence has to appear.
     s->auto_rotate = true;
@@ -304,7 +304,7 @@ static void apply_defaults(app_settings_t *s)
     // hour regardless of these.
     s->active_start_hour = ACTIVE_START_DEFAULT;
     s->active_end_hour = ACTIVE_END_DEFAULT;
-    // ON, because the operator asked for the white standby directly (2026-09-20) rather than asking
+    // ON, because the owner asked for the white standby directly (2026-09-20) rather than asking
     // to be able to turn it on -- so the shipping behaviour is the one they asked for and the switch
     // exists to undo it. Inert until low_power_mode is on, for the same reason the window above is:
     // with the master switch off there is no window edge to park at.
@@ -314,7 +314,7 @@ static void apply_defaults(app_settings_t *s)
     s->standby_deep = false;
     s->maint_day = MAINT_DAY_DEFAULT;
     // Ticket 71. ON by default, unlike ticket 68's standby_deep -- what it costs is capacity on a
-    // frame that lives on mains, not refreshes on a panel with a finite count, and the operator
+    // frame that lives on mains, not refreshes on a panel with a finite count, and the owner
     // asked for the cap rather than for a switch that starts off.
     s->charge_limit_pct = CHARGE_LIMIT_DEFAULT;
     s->current_mode[0] = '\0';

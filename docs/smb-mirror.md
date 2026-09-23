@@ -70,7 +70,7 @@ that writes the wrong bytes.
   **243-entry** directory bottoms out at `int_min` 13,207 B **with httpd already stopped**,
   against httpd's own 10 KB task stack. So the window's exclusion is load-bearing for the part
   that lists, and the cheap operation was separable all along. See
-  `docs/agents/measurements.md`.
+  `docs/measurements.md`.
 - **`smb_on_demand` (2026-09-06, default off) makes `/data` a CACHE OF WHAT IS BEING SHOWN rather
   than a mirror of one folder**, and it is what puts the whole share on the wall — verified drawing
   photographs from all six folders. The hourly run stops fetching a folder and only refreshes the
@@ -110,7 +110,7 @@ that writes the wrong bytes.
     index repeats were different files. Count by path; `catalog_count` holding at 1,032 proves
     nothing, because a refresh reorders without changing a total. **And a fetch count cannot see a
     lookahead at all** — map the index to its epoch position with `shuffle_predict.py`.
-- **`smb_resize` (2026-09-09, **default ON** by operator instruction) stores a photograph at the
+- **`smb_resize` (2026-09-09, **default ON** by owner instruction) stores a photograph at the
   size the panel draws it and writes its thumbnail beside it, instead of the share's own bytes**
   (ticket `49`, verified on hardware). Measured: **0.287x** stored size on the two thirds of this
   share that reduce, decode 1073-1196 ms plus encode 107-142 ms a photograph, `/thumb/`
@@ -136,7 +136,7 @@ that writes the wrong bytes.
     failure** — two fixtures were already at the box fit, and re-encoding them would lose a
     generation for nothing. Costs ~1.4 s on a 12 MP photograph (an estimate, n=1 either side).
     **The host suite for it passed with the fractional weight replaced by 1** until a case was
-    built that could tell them apart; `docs/agents/measurements.md` has that account, and it is
+    built that could tell them apart; `docs/measurements.md` has that account, and it is
     the "a check that cannot fail is not a check" rule landing on a unit test.
   - **THE BENCH SHARE IS TEST DATA and every figure derived from its composition is retracted**
     (2026-09-09): synthetic images, portrait only because of how they were made. A real
@@ -145,7 +145,7 @@ that writes the wrong bytes.
     everything measured about the machinery. `real_corpus.py` re-derives it; ticket `50` ranks
     what to do about it, and **auto-rotation was the largest single improvement available** —
     now built and measured, ticket `51` and the rotation section of
-    `docs/agents/render-pipeline.md`.
+    `docs/render-pipeline.md`.
   - **The factor comes from the SOURCE HEADER, before anything is allocated** (`img_image_dims()`).
     It did not, and every 1024x1024 photograph failed: a full-resolution decode plus a
     full-resolution copy is 6.29 MB against 6.44 MB of PSRAM. `resize_core()` can still reach an
@@ -164,7 +164,7 @@ that writes the wrong bytes.
     `delete_local()` and `h_photos_delete()` are the two places it is unlinked, and
     `store_photo()` clears a stale one before every write.
   - **Both sidecars live in `/data/.thumbs/`, not beside the photograph, since 2026-09-23**
-    (operator's request, so the card reads as photographs on a PC; it also frees a FAT16 root).
+    (owner's request, so the card reads as photographs on a PC; it also frees a FAT16 root).
     Every path is built by `app_smb_sync_sidecar_path()`. `app_smb_sync_sidecars_prepare()` runs
     at boot before the slideshow and after a media change: it creates the folder, moves any
     root-level `.thm`/`.mta` into it, and prints `# sidecars: dir= moved= failed= part=`. Nothing
@@ -406,7 +406,7 @@ that writes the wrong bytes.
   shipping `5760 / 6` every depth above 1 fails** with `Wrong signature in received PDU`. The
   default is 1, `board_smb.h` carries the condition, and the wrap is not the cause — signature
   verification is deterministic, so a wrong implementation could not fail intermittently.
-  Half the signing cost is still there and `docs/agents/measurements.md` says what closing it
+  Half the signing cost is still there and `docs/measurements.md` says what closing it
   would take.
 - **Watching a sync by polling `/api/smb/status` is what stops the sync.** It applies to an
   on-demand fetch as much as to a whole-mirror run: a 30 s poll held one want unfetched for seven

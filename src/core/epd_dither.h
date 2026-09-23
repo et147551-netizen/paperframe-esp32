@@ -55,7 +55,7 @@ extern const epd_palette_entry_t EPD_PALETTE_MANUAL[EPD_PALETTE_COUNT];
 //
 // Five independent calibrations of the same six Spectra 6 colours, from
 // refs/epdoptimize/src/dither/data/default-palettes.json (Apache-2.0). Ported rather than
-// measured again: see docs/agents/measurements.md for what this project's own colour
+// measured again: see docs/measurements.md for what this project's own colour
 // instruments could and could not say.
 //
 // **The order of these tables is load-bearing and is not the order of EPD_PALETTE.**
@@ -133,7 +133,7 @@ extern const epd_render_t EPD_RENDER_EPDOPT;
 // produce: it pushes 41.3 % of the image to black and loses shadow detail with it. So the
 // choice between them is a trade, it depends on the picture, and it is the user's --
 // hence the palette is a **setting** (app_settings.h) rather than a constant, and this is
-// only the default. docs/agents/measurements.md has the scans and the index histograms.
+// only the default. docs/measurements.md has the scans and the index histograms.
 //
 // New code should pass a cfg. The two plain wrappers below still mean EPD_RENDER_STOCK,
 // so nothing renders differently by accident; they are the old spelling, not the default.
@@ -317,7 +317,7 @@ int32_t epd_fit_reduction(int32_t img_w, int32_t img_h, int32_t screen_w, int32_
 // every phone photograph at ~50 % fill on a 2:3 screen where a turn gives ~89 %. What IS
 // taken from that side is the reason for having a threshold at all, which its comment
 // states -- "rotating them would betray the photographer's intended composition" -- so
-// 1:1 and anything under 1.25 stay as they were framed. The value is the operator's taste,
+// 1:1 and anything under 1.25 stay as they were framed. The value is the owner's taste,
 // not an optimisation: turning a disagreeing picture ALWAYS increases the drawn area, by
 // symmetry, so there is no maximum to find.
 //

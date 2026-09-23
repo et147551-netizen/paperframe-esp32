@@ -15,7 +15,7 @@
 //   * `colorMatching: "lab"`. There is no L*a*b* matcher on the device -- epd_dither.c is
 //     squared RGB throughout -- so `wanted_lab` records the request for the log line and
 //     nothing acts on it. It affects the textOrUi, lineArt and faded-scan arms.
-//   * `errorDiffusionMatrix`. src/epd_diffuse.c runs Floyd-Steinberg and only that, because it
+//   * `errorDiffusionMatrix`. src/core/epd_diffuse.c runs Floyd-Steinberg and only that, because it
 //     is the one kernel whose integer form is bit-identical to upstream's; a `stucki` request
 //     (highContrastPhoto) is recorded in `wanted_stucki` on the same terms as `wanted_lab` and
 //     falls back to Floyd-Steinberg. **`serpentine` is no longer dropped** -- it is a field of

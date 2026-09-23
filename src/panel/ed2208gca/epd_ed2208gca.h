@@ -10,7 +10,7 @@
 //   * NO epd_seq_t, no EPD_SEQ_STOCK / EPD_SEQ_BUSY, no epd_set_sequencing(). Those two
 //     alternatives exist on the EL040EF1 because ticket 09 measured the difference between
 //     them (597 ms per refresh, twice, an hour apart) and because EPD_SEQ_STOCK is the
-//     reference every figure in docs/agents/measurements.md is compared against. This panel's
+//     reference every figure in docs/measurements.md is compared against. This panel's
 //     reference sequence has a different shape entirely -- no BTST2 resend between PON and
 //     DRF, no fixed delays, a DSLP at the end -- so there is one sequence here and inventing
 //     a second to mirror an interface would be inventing a measurement condition.

@@ -5,7 +5,7 @@
 // about whether either is right -- and the properties are what the ticket actually argues for:
 //
 //   * a white render between every pair, because a flat inspected straight after another flat
-//     carries the measured ghost of docs/agents/measurements.md:123-133 and a person looking at it
+//     carries the measured ghost of docs/measurements.md:123-133 and a person looking at it
 //     would read the residue as a panel fault;
 //   * every step a colour this panel can actually show, which means index 4 (orange) must never
 //     appear -- it is invalid on both boards and has been guessed wrong twice;
@@ -171,7 +171,7 @@ static void test_clear_alternates_and_uses_two_colours(void)
     }
 }
 
-// Three black passes PER CYCLE: the operator asked for "white, black, white, three times", and the
+// Three black passes PER CYCLE: the owner asked for "white, black, white, three times", and the
 // repeat count multiplies that. Counting blacks is what pins the intent — a length change that
 // altered it would be visible here rather than only in the elapsed time.
 static void test_clear_has_three_black_passes_per_cycle(void)

@@ -89,7 +89,7 @@ Write-Output ("scanned {0}x{1} at {2} dpi in {3:N1} s -> {4}" -f $image.Width, $
 # **Say so when the scanner did not give you the region you asked for.** The order bug above was
 # invisible for exactly this reason: the tool reported a size and nothing compared it with the
 # request, so a short scan read as a successful one and the missing inch was blamed on the panel.
-# A warning rather than a throw, because the image is still usable and the operator may have asked
+# A warning rather than a throw, because the image is still usable and the owner may have asked
 # for more than the bed has.
 $wantW = [int]($WInch * $Dpi)
 $wantH = [int]($HInch * $Dpi)

@@ -1,20 +1,20 @@
 // Host-side driver so the real quantiser can be looked at before there is a canvas, an
 // image decoder, or a way to get a photograph onto the panel.
 //
-// It links src/epd_dither.c and src/epd_epdopt.c unchanged. That is the point: a
+// It links src/core/epd_dither.c and src/core/epd_epdopt.c unchanged. That is the point: a
 // reimplementation in Python would be quicker to write and would drift from the firmware
 // within a week, at which stage the preview would be reassuring rather than informative.
 //
 // Deliberately NOT in src/ -- under framework = espidf, src/CMakeLists.txt globs
 // src/*.* and would try to build this into the firmware.
 //
-//   clang -std=c11 -O2 -Isrc tools/render_preview.c src/epd_dither.c src/epd_canvas.c \
-//       src/epd_colour.c src/epd_epdopt.c -o render_preview
+//   clang -std=c11 -O2 -Isrc tools/render_preview.c src/core/epd_dither.c src/core/epd_canvas.c \
+//       src/core/epd_colour.c src/core/epd_epdopt.c -o render_preview
 //   render_preview <none|quality|auto|epdopt|epdopt-nearest> <w> <h> [palette] [serpentine]
 //                  [accurate]
 //
 // `quality` and `none` are M5GFX's row-wise paths and are what the frame renders with
-// (src/app_display.c) -- the two colour-reduction modes of FR-3.3.
+// (src/app/app_display.c) -- the two colour-reduction modes of FR-3.3.
 //
 // `auto` is those plus epdoptimize's own auto flow in front of them: classify the picture, choose
 // its settings from the class, run the five per-pixel stages. That is what the demo site does by
@@ -108,7 +108,7 @@ static int render_rows(int quality, long width, long height, const epd_render_t 
 }
 
 // Floyd-Steinberg error diffusion, which is the quantiser the frame uses when `dither_diffuse` is
-// on. **The same three steps in the same order as src/app_display.c's diffuse_and_pack()**: the
+// on. **The same three steps in the same order as src/app/app_display.c's diffuse_and_pack()**: the
 // integer tone compression the plan still owes, then the diffusion, then a nearest pack at
 // EPD_TONE_NONE -- which is exact, because every pixel is a palette entry by then, and which must
 // not carry a tone or it would compress the palette's own white and re-match it.
@@ -231,8 +231,8 @@ static int render_epdopt(int diffuse, int serpentine, int accurate, long width, 
 // when the setting is on: classify the picture, choose its settings from the class, apply the five
 // per-pixel stages, then quantise with M5GFX's row path.
 //
-// **This is the whole thing the device does, not an approximation of it.** src/epd_classify.c,
-// src/epd_auto.c and src/epd_adjust.c are the same objects, and the plan is printed so a colour
+// **This is the whole thing the device does, not an approximation of it.** src/core/epd_classify.c,
+// src/core/epd_auto.c and src/core/epd_adjust.c are the same objects, and the plan is printed so a colour
 // question can be answered against what it decided rather than against a guess. The one
 // difference is the region: on the device the picture sits inside a white matte and the stages are
 // given only its rectangle, whereas here the input *is* the picture.
@@ -290,7 +290,7 @@ static int render_auto(long width, long height, const epd_render_t *base, int di
     epd_flow_apply(&region, &plan, &white, NULL, NULL);
 
     // To stderr, because stdout carries the packed frame. Raw values in the same shape
-    // src/app_display.c logs them, so a preview and a capture can be read side by side.
+    // src/app/app_display.c logs them, so a preview and a capture can be read side by side.
     epd_render_t cfg = *base;
     cfg.tone = epd_auto_row_tone(&plan, base->tone);
     fprintf(stderr,
@@ -312,7 +312,7 @@ static int render_auto(long width, long height, const epd_render_t *base, int di
             (int)c.style);
 
     // Nearest is nearest on either quantiser, so `diffuse` does not override the plan's choice --
-    // the same rule as src/app_display.c.
+    // the same rule as src/app/app_display.c.
     if (diffuse && !plan.nearest) {
         const int rc = diffuse_and_pack(buffer, width, height, &cfg, plan.serpentine ? 1 : 0);
         if (rc != 0) {

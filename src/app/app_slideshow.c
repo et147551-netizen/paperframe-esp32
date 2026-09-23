@@ -58,7 +58,7 @@ static uint32_t s_last_refresh_ms;
 // takes the next position of a PERMUTATION rather than the next index.
 //
 // WHY A PERMUTATION AND NOT esp_random() % count. Independent draws revisit and starve: the
-// operator's complaint is "the frame shows the same pictures", and a random draw answers it
+// owner's complaint is "the frame shows the same pictures", and a random draw answers it
 // with "the frame shows some pictures three times before others once", which is the same
 // complaint in a new form. A permutation shows every photograph exactly once per pass.
 //
@@ -696,7 +696,7 @@ void app_slideshow_update(void)
     // Ticket 42's hold goes here and NOWHERE ELSE in this file: an automatic advance is the
     // only thing the schedule suppresses. A button press, an API call and a manual
     // app_slideshow_next() all still work while the window is closed, because the frame going
-    // unresponsive at 23:00 is a frame the operator cannot fix at 23:01. `s_last_refresh_ms`
+    // unresponsive at 23:00 is a frame the owner cannot fix at 23:01. `s_last_refresh_ms`
     // is deliberately not touched, so the first advance after the window reopens is due
     // immediately rather than one interval later.
     // **And ticket 68's colour course goes here too, which ticket 68 §7 argued against and a

@@ -4,7 +4,7 @@
 Timing a camera against a 12-second refresh by hand does not work, and a photograph
 taken mid-waveform shows a half-drawn frame that looks like a driver bug. So the
 firmware prints a marker once the frame is on the glass and settled, and this script
-takes the picture. See src/bringup_main.c.
+takes the picture. See src/entry/bringup_main.c.
 
     python tools/bringup_capture.py --board m5papercolor
 
@@ -32,11 +32,11 @@ CAPTURE_SCRIPT = REPO_ROOT / "tools" / "capture_panel.py"
 SCAN_SCRIPT = REPO_ROOT / "tools" / "scan_panel.ps1"
 LOG_DIR = REPO_ROOT / ".scratch" / "captures"
 
-# The panel's corner of the bed, in inches. From docs/agents/hardware-runs.md, which is
+# The panel's corner of the bed, in inches. From docs/hardware-runs.md, which is
 # where the WIA property-ID and extent-unit traps are written down.
 SCAN_REGION = ("-XInch", "0", "-YInch", "0", "-WInch", "3.5", "-HInch", "4.8")
 
-# env:frame prints @@DONE two minutes in and then keeps running (src/frame_main.c), so the default
+# env:frame prints @@DONE two minutes in and then keeps running (src/entry/frame_main.c), so the default
 # end marker stops a frame capture at t=120 s -- and closing the port resets the board. It happened
 # twice for the pairing arm and once for ticket 60's collision arm, whose driver then ran with
 # nothing recording, all with the trap already written down. So once one of these lines -- printed
@@ -121,7 +121,7 @@ def main():
     # SCAN_REGION's default is the M5Paper Color's 3.5 x 4.8 inch corner. The reTerminal E1002's
     # panel is 7.3" landscape and does not fit inside that rectangle, so the region is where the
     # board actually sits rather than a constant. Inches, because WIA's extents are in 300 dpi
-    # units whatever the scan resolution -- see docs/agents/hardware-runs.md.
+    # units whatever the scan resolution -- see docs/hardware-runs.md.
     ap.add_argument("--scan-x", type=float, help="scan origin X in inches")
     ap.add_argument("--scan-y", type=float, help="scan origin Y in inches")
     ap.add_argument("--scan-w", type=float, help="scan width in inches")
@@ -243,7 +243,7 @@ def main():
                     if is_frame and not until_given:
                         note = ("!! env:frame prints @@DONE at t=120 s and keeps running, so the "
                                 "default end marker is ignored; --timeout ends this capture. "
-                                "Pass --until to choose a marker (docs/agents/hardware-runs.md)")
+                                "Pass --until to choose a marker (docs/hardware-runs.md)")
                         print(note)
                         log.write(note + "\n")
                         log.flush()

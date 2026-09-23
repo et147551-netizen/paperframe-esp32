@@ -189,7 +189,7 @@ static void test_logical_walk_agrees_with_the_pixel_accessor(void)
         // rotations -- so `dy` never left 0, `step_y` was never multiplied by anything, and the
         // test passed with rotation 3's `step_y` sign deliberately inverted. A fixture that does
         // not exercise the axis it was written for is the failure mode this project has now hit
-        // six times (docs/agents/handover-auto-flow.md); the cheap defence is to state the
+        // six times (docs/handover-auto-flow.md); the cheap defence is to state the
         // precondition the test needs.
         TEST_ASSERT_GREATER_OR_EQUAL_INT32_MESSAGE(2, rw, "rectangle too thin to test step_x");
         TEST_ASSERT_GREATER_OR_EQUAL_INT32_MESSAGE(2, rh, "rectangle too thin to test step_y");

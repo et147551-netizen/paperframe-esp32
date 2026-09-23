@@ -41,7 +41,7 @@
 // step 2 keeps it here rather than in board_wifi.c because it is the same kind of secret as the
 // token, minted by the same RNG at the same moment and shown on the same screen.
 //
-// **It was 16 hex characters and the operator asked for the minimum, because it is typed by hand**
+// **It was 16 hex characters and the owner asked for the minimum, because it is typed by hand**
 // (ticket 66). 8 is WPA2's own floor -- board_wifi_ap_secure() refuses anything outside 8-63 -- so
 // there is nothing shorter to go to.
 //
@@ -57,7 +57,7 @@
 // **40 bits is the honest number and it is not large.** A captured 4-way handshake can be ground
 // offline at PBKDF2-SHA1 speeds -- **an ESTIMATE of days on one GPU, arithmetic from published
 // hash rates and not a measurement anybody here took**, and it is written that way because this
-// project's rule is that a prediction carries its status (`docs/agents/method.md`). So it rests on
+// project's rule is that a prediction carries its status (`docs/method.md`). So it rests on
 // the same trust boundary everything else here does: physical access to the frame, a home network,
 // and a password only ever shown on the glass. **Ticket 67 is the other half of the trade** -- the
 // access point is down unless somebody asked for it, so there is no beacon to capture a handshake
@@ -93,8 +93,7 @@ void app_auth_token_hex(char *out, size_t size);
 //
 // **And deliberately not seeded from a build flag either**, unlike the token. FRAME_API_TOKEN
 // exists because this bench cannot read a pairing QR; a seeded AP password would not help it
-// either way, since this PC cannot join a Wi-Fi network at all (group policy denies the location
-// permission netsh needs). So the only way to learn it is the panel, which is where ticket 30
+// either way, since the bench PC cannot join a Wi-Fi network from a command line. So the only way to learn it is the panel, which is where ticket 30
 // wants it.
 void app_auth_ap_password(char *out, size_t size);
 

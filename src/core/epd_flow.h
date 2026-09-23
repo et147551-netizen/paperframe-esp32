@@ -19,7 +19,7 @@
 // **A reordering is invisible to every other check in the build.** Each stage is host-tested on its
 // own -- 443 cases across 25 suites -- and none of them sees the order, so swapping two lines passes
 // `pio test -e native`, passes all ten device builds, and shows up as a picture a person has to
-// judge. docs/agents/handover-auto-flow.md:41 records the gap in its own table: the row for `the
+// judge. docs/handover-auto-flow.md:41 records the gap in its own table: the row for `the
 // wiring` names app_display.c's auto_adjust_canvas() and leaves the fixture column empty. Two of
 // the existing suites can only assert that a WITNESS still exists for a rule enforced here --
 // test_auto/test_main.c:262 fails with "no fixture reaches the diffuser with range=off; the pre-tone
@@ -75,7 +75,7 @@ typedef int64_t (*epd_flow_clock_t)(void);
 // Per-stage durations, in the order the stages run. All zero when no clock was supplied.
 //
 // This exists because photo_main.c's whole purpose is these six numbers -- they are what
-// docs/agents/measurements.md quotes -- so a composition that could not report them would have left
+// docs/measurements.md quotes -- so a composition that could not report them would have left
 // the timing arm as a fourth hand-written copy of the order.
 typedef struct {
     int64_t white_plan_us;

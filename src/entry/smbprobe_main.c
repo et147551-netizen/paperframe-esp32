@@ -681,7 +681,7 @@ static void empty_listing_arm(void)
 //
 // PRE-REGISTERED, and the arithmetic that says "impossible" is already refuted rather than
 // untested. app_smb_sync.h:109 quotes 0.5 KB an entry, which puts 1,070 entries at ~535 KB and
-// this board has nothing like that; docs/agents/measurements.md says in its own heading that
+// this board has nothing like that; docs/measurements.md says in its own heading that
 // the figure "cannot be extrapolated -- it was a decomposition of one listing, not a slope",
 // and the two dated points are 129 entries -> ~60 KB and 243 entries -> ~61 KB, about 9 bytes
 // an entry. So:
@@ -921,7 +921,7 @@ static void smb_task(void *arg)
     for (int run = 2; run <= SMBPROBE_RUNS; run++) {
         // Space the runs out. Back-to-back operations on this board have looked ten
         // times more repeatable than spaced ones before, and the difference was the
-        // spacing (docs/agents/method.md, the refresh timings).
+        // spacing (docs/method.md, the refresh timings).
         vTaskDelay(pdMS_TO_TICKS(5000));
         if (probe_once(run) == 0) {
             ok++;
@@ -952,10 +952,9 @@ void app_main(void)
     // NVS first, build flags second. The station credentials the frame uses are the ones
     // the Web UI wrote (`/api/wifi/config` -> app_settings_set_wifi), and NVS survives an
     // app upload -- so configuring Wi-Fi once in a browser configures this build too, and
-    // no Wi-Fi secret has to exist in any file. The build-flag fallback stays because this
-    // PC cannot join a Wi-Fi network programmatically: `netsh wlan connect` needs the
-    // machine's location permission, which is set to Deny, so on 2026-09-04 the Web UI
-    // could not be reached from here at all.
+    // no Wi-Fi secret has to exist in any file. The build-flag fallback stays because the
+    // bench PC cannot join a Wi-Fi network programmatically, so on 2026-09-04 the Web UI
+    // could not be reached from it at all.
     esp_err_t err = app_settings_init();
     if (err != ESP_OK) {
         printf("# app_settings_init failed: %s\n", esp_err_to_name(err));
@@ -978,8 +977,8 @@ void app_main(void)
     // Persist what we are about to use, into the same NVS keys the Web UI writes
     // (`/api/wifi/config` -> app_settings_set_wifi). That is what lets env:frame be
     // flashed afterwards and come up on the station without anyone typing anything --
-    // which matters here because this PC cannot join the frame's own AP: `netsh wlan
-    // connect` needs the machine's location permission and it is set to Deny.
+    // which matters here because the bench PC cannot join the frame's own AP from a
+    // command line.
     if (strcmp(cred_source, "build-flags") == 0) {
         const esp_err_t serr = app_settings_set_wifi(ssid, pass);
         printf("# seeded NVS wifi_ssid/wifi_pass: %s\n", esp_err_to_name(serr));

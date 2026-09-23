@@ -92,7 +92,7 @@ static const uint8_t GLYPHS[GLYPH_COUNT][EPD_TEXT_GLYPH_H] = {
     /* 'e' */ {0x00, 0x00, 0x0E, 0x11, 0x1F, 0x10, 0x0E},
     /* 'f' */ {0x06, 0x08, 0x08, 0x1C, 0x08, 0x08, 0x08},
 
-    // Added 2026-09-19 for the matte band's room line, which the operator asked to read
+    // Added 2026-09-19 for the matte band's room line, which the owner asked to read
     // `25°C 51%` rather than `25C RH51` (ticket 64). Both are uppercase-neutral, so nothing
     // about the connect card changes.
     //

@@ -8,7 +8,7 @@
 // unexplained number is load-bearing for a shipped design, and nobody knows whether the
 // cause is the network, lwIP's receive window, the 4096-byte chunking or libsmb2.
 //
-// This build answers the first of those without touching src/board_smb.c at all. It is
+// This build answers the first of those without touching src/app/board_smb.c at all. It is
 // station-only on purpose -- no panel, no AP, no storage, no httpd, no SMB -- so the number
 // is the transport and not a mixture.
 //
@@ -29,7 +29,7 @@
 // 4 KB + 16384 was the only no-stall combination in its table. Both values are committed,
 // but only in the generated per-env sdkconfig files -- so the setting does not propagate to
 // a new environment, and deleting a generated sdkconfig to pick up a sdkconfig.defaults
-// edit (the procedure docs/agents/build-system.md documents) silently resets it to 5760.
+// edit (the procedure docs/build-system.md documents) silently resets it to 5760.
 //
 // So this env is run TWICE, once at each value, and sdkconfig.iperf is the knob:
 //
@@ -236,7 +236,7 @@ static esp_err_t wifi_station_up(const char *ssid, const char *pass)
 
     // The house AP leads with WPA3-Personal. Without these three the station associates and
     // then dies in the 4-way handshake with reason=204, which reads exactly like a wrong
-    // password and is not one. Same three lines as src/board_wifi.c and smbprobe_main.c.
+    // password and is not one. Same three lines as src/app/board_wifi.c and smbprobe_main.c.
     cfg.sta.sae_pwe_h2e = WPA3_SAE_PWE_BOTH;
     cfg.sta.pmf_cfg.capable = true;
     cfg.sta.pmf_cfg.required = false;
@@ -411,9 +411,8 @@ void app_main(void)
 
     // NVS first, build flags second -- the same order and the same keys as smbprobe, so
     // that Wi-Fi configured once in the Web UI configures this build too and no Wi-Fi
-    // secret has to exist in any file. The fallback stays because this PC cannot join a
-    // Wi-Fi network from a command line: netsh wlan connect needs the machine's location
-    // permission and it is denied by group policy.
+    // secret has to exist in any file. The fallback stays because the bench PC cannot join
+    // a Wi-Fi network from a command line.
     esp_err_t err = app_settings_init();
     if (err != ESP_OK) {
         printf("# app_settings_init failed: %s\n", esp_err_to_name(err));

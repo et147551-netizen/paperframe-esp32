@@ -14,7 +14,7 @@
 // WHY IT IS BUILT ONE FOLDER AT A TIME, which is the part that looks arbitrary and is not.
 // smb2_opendir() materialises an entire directory in internal RAM before the first
 // smb2_readdir() returns, at a MEASURED 142.5 bytes per directory entry -- linear, no
-// intercept, three points across two envs on one line (docs/agents/measurements.md,
+// intercept, three points across two envs on one line (docs/measurements.md,
 // 2026-09-06). env:frame idles at ~71-74 KB internal free, so it can list roughly 315-420
 // entries and no more; the share root's 1,080 entries would need 153,784 B and are simply out
 // of reach. libsmb2 offers no batched listing and no allocator hook, so the cap cannot be
@@ -78,7 +78,7 @@ typedef struct {
     //
     // folder_cursor: which folder of smb_path's list is catalogued next. Without persisting it,
     // a frame that restarts more often than once per (number of folders) runs never advances
-    // past folder 0 -- seen twice on 2026-09-06, once in a test and once when the operator
+    // past folder 0 -- seen twice on 2026-09-06, once in a test and once when the owner
     // rebooted the board.
     //
     // seed: the shuffle epoch's PRNG seed (see smb_catalog_shuffle). UNUSED UNTIL PHASE 2 and
@@ -169,7 +169,7 @@ bool smb_catalog_parse(smb_catalog_t *c, const char *text, size_t len);
 // ------------------------------------------------------------------- the shuffle epoch
 //
 // Selection is a PERMUTATION WALKED WITH A CURSOR, not an independent draw per advance.
-// esp_random() % n revisits and starves: over 2,100 photographs the operator would see
+// esp_random() % n revisits and starves: over 2,100 photographs the owner would see
 // repeats long before they saw variety, which is the complaint this whole ticket exists to
 // answer, arriving in a new form. A permutation shows every photograph exactly once per pass.
 //

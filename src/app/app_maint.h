@@ -1,6 +1,6 @@
 // Panel maintenance: a colour course a person looks at, and an inactive window that rests on white.
 //
-// Ticket 68, the operator's request of 2026-09-20. Two things, one module, because both are edits to
+// Ticket 68, the owner's request of 2026-09-20. Two things, one module, because both are edits to
 // the same seam -- the edge of the active-hours window -- and because the second makes the first
 // cheaper.
 //
@@ -14,18 +14,18 @@
 //   (b) THE WHITE STANDBY. The panel holds its image with no power, so the window's `hold=1` leaves
 //       the last photograph on the glass for the whole eight hours -- exactly the image-sticking
 //       condition GooDisplay's precautions warn about. White instead, which also clears the previous
-//       render completely (docs/agents/measurements.md:123-133) so every morning starts clean.
+//       render completely (docs/measurements.md:123-133) so every morning starts clean.
 //
 // **NO TASK OF ITS OWN, and that is a memory decision rather than a style one.** Internal RAM is the
 // scarce resource on this board and two small tasks were once enough to make httpd_start() return
 // ESP_ERR_HTTPD_TASK -- a frame that booted with a panel, a slideshow and no web UI at all
-// (docs/agents/board-and-storage.md, ticket 21). So this is a tick from the application task, the
+// (docs/board-and-storage.md, ticket 21). So this is a tick from the application task, the
 // same place ticket 55's LED poll lives. A course spends its whole length waiting, which is what
 // makes that affordable: ten refreshes and nine gaps, and nothing in between.
 //
 // **IT IS NOT A NEW SUPPRESSION.** The schedule suppresses the automatic advance and nothing else,
 // deliberately -- a button press, an API call and a manual next all still work while the window is
-// closed, because a frame that goes unresponsive at 23:00 is one the operator cannot fix at 23:01
+// closed, because a frame that goes unresponsive at 23:00 is one the owner cannot fix at 23:01
 // (app_slideshow.c). Both halves here are ONE-SHOT ACTIONS taken at a window edge or on request, so
 // nothing in app_slideshow.c changes.
 //
@@ -79,7 +79,7 @@ void app_maint_tick(void);
 esp_err_t app_maint_start_course(bool spread);
 
 // Starts a CLEAR CYCLE now: white, black, white, black, white, black, white — three black passes each
-// bracketed by white, back to back, ending on white. Operator's request of 2026-09-20, after asking
+// bracketed by white, back to back, ending on white. Owner's request of 2026-09-20, after asking
 // whether the existing mechanisms could deal with mild ghosting.
 //
 // **`cycles` repeats that, 1..EPD_MAINT_CLEAR_CYCLES_MAX, and it is a COUNT rather than a duration on
@@ -93,7 +93,7 @@ esp_err_t app_maint_start_course(bool spread);
 // legible 1-bit black-on-white ghost completely (ticket 30, 2026-09-10), and the nightly standby
 // already does one; `{"action":"white"}` does one on demand. This exists for the case beyond that.
 //
-// **AND THAT CASE HAS NEVER BEEN PRODUCED HERE.** The operator declined to manufacture a ghost to test
+// **AND THAT CASE HAS NEVER BEEN PRODUCED HERE.** The owner declined to manufacture a ghost to test
 // it, so nothing measures whether three black passes beat one white. It rests on the vendor precaution
 // and on every render being a full-frame DRF; cite it as a mechanism, never as a remedy.
 //

@@ -151,7 +151,7 @@ static void led_task(void *arg)
             // gap, on the grounds that changing the duty here would spend a power budget ticket
             // 55 §3 chose deliberately -- and **the gap is closed as of 2026-09-20 without
             // spending it**, because fault_on() splits the same 50 ms into two flashes rather
-            // than lengthening it. The operator made the blink state the designated way to tell
+            // than lengthening it. The owner made the blink state the designated way to tell
             // a resting frame from a broken one (ticket 68 §11), so a fault that looks like
             // resting became a wrong answer rather than a missing nicety.
             //

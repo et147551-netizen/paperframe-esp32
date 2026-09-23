@@ -1,7 +1,7 @@
 // The alphabet and the encoder for a short secret a person reads off the panel and types in.
 //
 // **Two things use it**: the pairing code, which is what this file was written for, and since
-// 2026-09-19 the access point's WPA2 password, which the operator asked to be as short as it can
+// 2026-09-19 the access point's WPA2 password, which the owner asked to be as short as it can
 // be because it is typed by hand (both ticket 66; `app_auth.h` carries the entropy arithmetic).
 // The file keeps its name because the pairing code is the one with rules of its own below.
 //

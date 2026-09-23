@@ -1,4 +1,4 @@
-// Does src/epd_auto.c choose what epdoptimize's buildLayeredSuggestion() chooses?
+// Does src/core/epd_auto.c choose what epdoptimize's buildLayeredSuggestion() chooses?
 //
 // Run: ~/.platformio/penv/Scripts/pio.exe test -e native
 // Regenerate the fixtures: node tools/epdopt_reference.mjs --auto
@@ -6,7 +6,7 @@
 // **The classification handed in is upstream's, not this project's.** Every fixture carries the
 // metrics classifyImageStyle() produced, and this file feeds those straight to
 // epd_auto_suggest(). So a failure here is a fault in the suggestion and cannot be one in
-// src/epd_classify.c -- which test/test_classify/ covers separately, against its own stated
+// src/core/epd_classify.c -- which test/test_classify/ covers separately, against its own stated
 // tolerances. Chaining the two would make every failure ambiguous.
 //
 // That also means **these are equality assertions, not tolerance bands.** The parameters
@@ -34,7 +34,7 @@
 void setUp(void) {}
 void tearDown(void) {}
 
-// Fixture palette index -> the table src/app_display.c would hand in. 0 is what the frame ships;
+// Fixture palette index -> the table src/app/app_display.c would hand in. 0 is what the frame ships;
 // 1 is the arm for applyPaletteTuning's `lumaRange <= 150` override, which fires for `manual`
 // (130.6) and not for `aitjcize` (195.9).
 static const epd_palette_entry_t *palette_of(int index)
@@ -261,7 +261,7 @@ static void test_row_tone_gives_exactly_one_range_compression(void)
 
     // The case the diffusion path must not drop on the floor. If this ever reaches zero, either
     // the palette guard swallowed every range=off arm or the kind table changed, and the pre-pass
-    // in src/app_display.c has become untested rather than unnecessary.
+    // in src/app/app_display.c has become untested rather than unnecessary.
     TEST_ASSERT_GREATER_THAN_INT_MESSAGE(
         0, diffused_without_stage,
         "no fixture reaches the diffuser with range=off; the pre-tone pass is now untested");

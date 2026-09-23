@@ -33,7 +33,7 @@ dependencies:
   ##     is a third licence class alongside the MIT-family bulk and libsmb2's LGPLv2.1.
   ##     Recorded here for the same reason libsmb2's is: so it is not rediscovered.
   ##  2. PREBUILT .a ONLY -- esp-adf-libs ships lib/esp32s3/ plus headers, no source. So the
-  ##     -Wl,--wrap trick that src/smb_aes_hw.c uses against libsmb2 is NOT available
+  ##     -Wl,--wrap trick that src/app/smb_aes_hw.c uses against libsmb2 is NOT available
   ##     against this, and neither is reading it to settle a question.
   ##
   ## Its encoder is a constant 10 kB of DRAM per the component's README. That was going to

@@ -3,7 +3,7 @@
 // Worth its own suite for one reason: the WRAPPING window (22:00-06:00) is where the obvious
 // implementation is wrong, and it is wrong SILENTLY -- an `&&` where the wrap needs an `||`
 // yields the empty set, so the frame holds its picture for ever and looks broken rather than
-// scheduled. Every case below is written so that swapping that operator, or making the
+// scheduled. Every case below is written so that swapping that owner, or making the
 // interval closed at both ends, turns a test red rather than leaving it green.
 //
 // The second thing under test is the fail-open ladder. A frame with no clock must refresh, and

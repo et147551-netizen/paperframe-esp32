@@ -22,7 +22,7 @@ src/entry/    ten app_main()s, each guarded by its own -DBUILD_* flag.
 ```
 
 **One build flag selects a board and there is no default.** `-DBOARD_M5PAPER_COLOR` or
-`-DBOARD_RETERMINAL_E1002`; `board.h`'s `#else` arm is an `#error`. `docs/agents/build-system.md`
+`-DBOARD_RETERMINAL_E1002`; `board.h`'s `#else` arm is an `#error`. `docs/build-system.md`
 has what that costs and the one trap (`platformio_local.ini` replaces `build_flags`).
 
 **The board interface is short because that is what the code needed.** `board.h` declares
@@ -34,7 +34,7 @@ has what that costs and the one trap (`platformio_local.ini` replaces `build_fla
 puts the ambient temperature and humidity on the Settings → System panel. Two things follow. It is
 the first caller to read the sensor *repeatedly*, and that is what exposed a wait of one FreeRTOS
 tick against an 8.2 ms conversion: 7 of 8 reads failed, the fix is two ticks, and **both boards were
-fixed and both measured 12 of 12 afterwards** (`docs/agents/defect-log.md` 2026-09-18).
+fixed and both measured 12 of 12 afterwards** (`docs/defect-log.md` 2026-09-18).
 
 **And the "no mutex on this I2C bus, so they take turns by luck" line that stood here until
 2026-09-21 was WRONG, in a way that matters** — it was read from this project's own files and never
@@ -97,7 +97,7 @@ deliberately; this is the table to read them through.
 **What is deliberately still per-board: the aspect ratio** — though far less of it than when this was
 written. 400x600 is portrait 2:3 and 800x480 is landscape 5:3, which flips `epd_fit_centre()`'s
 matte-versus-crop decision for the common case and invalidates every row of
-`docs/agents/measurements.md`'s geometry table on the larger panel. **Matte-versus-crop was decided
+`docs/measurements.md`'s geometry table on the larger panel. **Matte-versus-crop was decided
 2026-09-17 (matte, both boards) and the replacement geometry table was derived 2026-09-19** in ticket
 `64`'s decision section, for both panels and under the settings that ship. What is left of ticket `62`
 is folding that table in. The layering made the assumption visible; the decisions resolved it.
@@ -136,11 +136,11 @@ draw from the DMA-capable pool, and it can run dry while a total free size says 
 room; below a largest block of about 2 KB, lwIP silently drops arriving frames and the frame
 stops answering ICMP and TCP with a perfectly healthy console. The heartbeat prints
 `int_largest`, `dma_free` and `dma_largest` for this reason. Shipping idle is `int_free`
-~72 KB and `dma_largest` ~31 KB. The account is in `docs/agents/defect-log.md`.
+~72 KB and `dma_largest` ~31 KB. The account is in `docs/defect-log.md`.
 
 **Those two figures are the HEARTBEAT's, and `GET /api/system/info`'s `diag` block is not comparable
 with them.** The route reports the same fields, which makes it the convenient way to watch a long run
-without a serial capture — a capture reboots the board when it closes (`docs/agents/hardware-runs.md`)
+without a serial capture — a capture reboots the board when it closes (`docs/hardware-runs.md`)
 — **but it samples them from inside a request**, so the request's own buffers, the JSON being built
 and the worker's stack are all in the reading. Measured 2026-09-21 on both boards under a checkpoint
 that had just made eighteen requests: `int_free` **62.7 KB** (M5Paper Color) and **64.6 KB** (E1002)
@@ -265,7 +265,7 @@ have a reading for a prefix. The one that matters: **a `.smbidx` cut exactly on 
 parses as an index of a smaller cache and nothing anywhere reports it.** It takes the storage lock
 itself for the whole open-write-rename sequence, so **a caller must not already hold it** — the lock
 is not recursive and `board_storage_lock()` asserts on re-entry by the same task. All four writers
-that had their own copy of this sequence, or lacked one, call it now (`docs/agents/smb-mirror.md`).
+that had their own copy of this sequence, or lacked one, call it now (`docs/smb-mirror.md`).
 
 **One file is written with `fopen("wb")` on purpose, and the lock is the reason** (ticket `82`):
 `/data/.imgseq`, the upload sequence's high-water mark, is written inside
@@ -306,7 +306,7 @@ anything wanting a temperature before its first refresh gets 0.
 
 **`EPD_SEQ_BUSY` is the default**, chosen against scans; FRS stays a parameter and `0x08`
 stays the setting. The numbers, the alternatives and why the fast settings are not adopted
-are in `docs/agents/measurements.md`.
+are in `docs/measurements.md`.
 
 ## Charging is NOT in the board interface, and adding it is a one-board affair
 
@@ -344,13 +344,13 @@ while actively charging would settle `[4:3]` against `[1:0]` outright.
 
 ## Working with the hardware
 
-**`docs/agents/hardware-runs.md` is the procedure — read it before flashing anything.**
+**`docs/hardware-runs.md` is the procedure — read it before flashing anything.**
 It carries the pre-flight supply check, the exact `tools/bringup_capture.py` invocations
 per env, the stop conditions and the recovery ladder. `bringup_capture.py` is not a camera
 helper; it is how firmware gets run here, and it already has the timeout, the non-zero
 exit and the correct reset that a hand-rolled serial script will not.
 
-**While the operator is remote, PM1 `SYS_CMD` is forbidden** — a power-off, and VBUS does not
+**While the owner is remote, PM1 `SYS_CMD` is forbidden** — a power-off, and VBUS does not
 boot this board — enforced by `-DBOARD_NO_POWER_OFF` on every device env.
 
 **`tinyusb_driver_install()` is called in exactly one place: ticket `09`'s USB drive mode**
@@ -398,7 +398,7 @@ the text length. `python tools/qr_check.py --dpi 300 --expect-join '…' --expec
 '…'` scans the panel's corner of the bed and decodes; at 300 dpi both come back exact. **A
 flatbed is an easier reader than a camera** — even light, dead flat, no perspective — so a
 pass is necessary and not sufficient while a failure is decisive, and that asymmetry is what
-makes it a good filter before spending the operator's time. `-DFRAME_PAIRING_AT_BOOT` in
+makes it a good filter before spending the owner's time. `-DFRAME_PAIRING_AT_BOOT` in
 `platformio_local.ini` draws it once at boot so the scan loop needs no finger, and **should
 not ship**. The screen carries **no text** — `epd_canvas` has no font — so since 2026-09-10 the
 two codes are told apart by a **count**: one filled square beside the code that joins the network,

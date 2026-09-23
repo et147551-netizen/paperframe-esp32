@@ -2,7 +2,7 @@
 //
 // This exists because the panel had no text on it at all. The pairing screen was two QR codes
 // and a count of filled squares beside each, which a phone can read and a person cannot: an
-// operator on a PC has no camera, so the access point's password, the frame's address and the
+// owner on a PC has no camera, so the access point's password, the frame's address and the
 // pairing code were all unreachable (ticket 66). `epd_canvas` has fills and blits and no
 // glyphs, and ticket 64's clock option is blocked on the same absence.
 //
@@ -24,7 +24,7 @@
 //
 // **`a-f` was added for the access point's password and the card no longer needs it.** That password
 // was 16 lowercase hex characters, case-sensitive to the letter because WPA2 derives its PMK from
-// the passphrase bytes; on 2026-09-19 the operator asked for the shortest typeable password and it
+// the passphrase bytes; on 2026-09-19 the owner asked for the shortest typeable password and it
 // became 8 uppercase Crockford base32 characters, so **nothing on the card is lowercase any more.**
 // The six glyphs stay: they are drawn, proof-read and tested, they cost 42 bytes of rodata, and a
 // caption or a clock in the matte (ticket 64, options 3 and 4) is the next thing likely to want
@@ -69,7 +69,7 @@ void epd_text_draw(epd_canvas_t *c, int32_t x, int32_t y, int32_t scale, const c
 // The same string turned 90° CLOCKWISE: the line runs DOWNWARD from (x, y) and the tops of the
 // glyphs point towards +x -- the sense a reader gets by tilting their head to the right, and the
 // same sense as Japanese vertical setting. One fixed direction whichever side of the photograph
-// the band is on (ticket 64, operator 2026-09-19): the band's side varies with the picture, so a
+// the band is on (ticket 64, owner 2026-09-19): the band's side varies with the picture, so a
 // direction that followed it would change how the frame is read from one refresh to the next.
 //
 // **(x, y) is the top-left of the bounding box and the two extents SWAP**: the box is

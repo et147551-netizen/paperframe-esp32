@@ -15,7 +15,7 @@
 // boot's heartbeat, .scratch/captures/frame-dirscan-20260906-172013.log). The conclusion
 // above survives anyway, and now for a measured reason rather than that one: a 243-entry
 // listing takes int_min to 13,207 B WITH httpd ALREADY STOPPED, against httpd's own 10,240 B
-// task stack (docs/agents/measurements.md, 2026-09-06). It is the LISTING that cannot
+// task stack (docs/measurements.md, 2026-09-06). It is the LISTING that cannot
 // coexist; a connect alone was measured to coexist comfortably -- see the connect test below.
 //
 // Two consequences follow, and both are the design rather than a workaround:
@@ -120,7 +120,7 @@
 //
 // THE PER-ENTRY COST IS 142.5 BYTES, MEASURED 2026-09-06, and it is a straight line through
 // the origin: 129 dirents draw 18,252 B and 1,080 draw 153,784 B, two sizes 8.4x apart each
-// predicting the other to 0.6 % (21 samples and 1; docs/agents/measurements.md). The "roughly
+// predicting the other to 0.6 % (21 samples and 1; docs/measurements.md). The "roughly
 // 0.5 KB per entry" this comment used to quote was 3.6x too high -- it was one listing's share
 // of a whole-window dip, never a slope.
 //
@@ -281,9 +281,9 @@ typedef enum {
 #define SMB_RESIZE_PNG_MIN_BYTES (1024u * 1024u)
 
 // Where both sidecars below live: `/data/a.jpg` has `/data/.thumbs/a.jpg.thm` and `.mta`. Moved
-// out of the root on 2026-09-23 at the operator's request, so the card reads as photographs when
+// out of the root on 2026-09-23 at the owner's request, so the card reads as photographs when
 // it is opened on a PC. It also keeps them out of a FAT16 root's fixed 512 entries, which filled
-// at 73 photographs when every photograph cost three names there (docs/agents/defect-log.md).
+// at 73 photographs when every photograph cost three names there (docs/defect-log.md).
 // Nothing that lists /data sees the folder: board_storage_scan() and local_set_build() both skip
 // DT_DIR. Build every sidecar path with app_smb_sync_sidecar_path(), never by hand.
 #define SMB_SIDECAR_DIR BOARD_STORAGE_MOUNT "/.thumbs"
@@ -307,7 +307,7 @@ typedef enum {
 // **Import is the only moment this can be read.** store_photo() re-encodes through esp_new_jpeg
 // whenever smb_resize is on and the source is larger than the box, and the re-encode carries no
 // EXIF at all -- so a photograph on the card usually has none and a draw-time read would find
-// nothing for most of a library (`docs/agents/smb-mirror.md`).
+// nothing for most of a library (`docs/smb-mirror.md`).
 //
 // **What it costs, stated because it is not free**: a directory entry per photograph in
 // SMB_SIDECAR_DIR (in /data's root, doubling what ticket 36's one-readdir scan walked, until
@@ -482,7 +482,7 @@ void app_smb_sync_request(void);
 // this is the one SMB operation cheap enough to attempt while httpd is up.
 //
 // IT DELIBERATELY DOES NOT STOP httpd, and that makes it the smallest safe form of an open
-// question: docs/agents/defect-log.md records that whether a sync still needs to stop httpd is
+// question: docs/defect-log.md records that whether a sync still needs to stop httpd is
 // an unresolved measurement rather than a closed decision. Testing it here costs a
 // connect, cannot corrupt the mirror, has no listing peak, and refuses outright below the
 // floors above. A window is the wrong place to ask it for the first time.

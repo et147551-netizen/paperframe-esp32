@@ -133,7 +133,7 @@ static esp_err_t codec_init(void)
 //     20 sounds. Every one of them was back to its starting figure after teardown.
 //     (.scratch/captures/audio-mem-20260922-223120.log, ticket 16.)
 //   * lwIP silently drops frames once dma_largest is below ~2 KB
-//     (docs/agents/board-and-storage.md).
+//     (docs/board-and-storage.md).
 // If the channel came out of the largest block, keeping 2 KB clear needs ~4.2 KB. 8 KB is about
 // twice that. It also sits above the 5,888 B that an on-demand SMB fetch's trough reaches, so a
 // press at that moment waits the fetch out.
@@ -278,7 +278,7 @@ static float midi_hz(int midi)
 
 // FR-1.2's sound: a three-note rising chime, C6-E6-G6, each note built the way a press tone is.
 //
-// **NOT the shipping firmware's boot sound, by the operator's choice (2026-09-22).** That is a
+// **NOT the shipping firmware's boot sound, by the owner's choice (2026-09-22).** That is a
 // 1.8 s recording (refs/M5PaperColor-UserDemo/main/assets/boot_sfx.h). It was ported and played on
 // this board, then compared by ear against this chime, both on the device and as PC renders of
 // this file's exact digital path. The chime won, and the recording and its +318 KB of flash went.

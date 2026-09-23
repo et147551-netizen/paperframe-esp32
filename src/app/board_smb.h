@@ -68,7 +68,7 @@
 // mostly network. 82 % of a 4 KB read was SMB3 signature verification -- libsmb2 verifies
 // every received PDU (lib/socket.c:567-582) with AES-CMAC while re-expanding the AES key for
 // every 16-byte block (lib/aes.c:444-456), measured at 4.895 us per byte. So pipelining
-// recovers the queueing and network legs and then flattens. src/smb_aes_hw.c is where the
+// recovers the queueing and network legs and then flattens. src/app/smb_aes_hw.c is where the
 // rest went.
 //
 // AND IT IS 1 IN THE SHIPPING BUILD, because more than one reply in flight is only correct
@@ -216,7 +216,7 @@ board_smb_err_t board_smb_list_path(const char *path, board_smb_list_what_t what
 // first smb2_readdir() returns, so the RAM is a function of `dirents` while every figure
 // recorded here so far was labelled with the *kept* count. That conflation made one 243-entry
 // measurement read as a 200-entry one and the per-entry slope look ~25x steeper than it is
-// (docs/agents/measurements.md, the listing-transient section).
+// (docs/measurements.md, the listing-transient section).
 //
 // The internal-RAM samples bracket the materialisation: `open` is taken the instant
 // smb2_opendir returns, which is the peak, and int_min before/after brackets the trough the

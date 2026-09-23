@@ -29,7 +29,7 @@
 //
 // A GREEN BUILD IS NOT EVIDENCE THE WRAP TOOK. PlatformIO re-does the link in SCons from
 // CMake's file API and is known not to carry every kind of CMake target across -- the
-// esp_mmap_assets case in docs/agents/build-system.md is a UTILITY target that silently never
+// esp_mmap_assets case in docs/build-system.md is a UTILITY target that silently never
 // ran. So this file
 // checks the artifact rather than the exit code: it verifies itself against the FIPS-197
 // AES-128 vector on first use and prints one line saying so. If that line is absent from a

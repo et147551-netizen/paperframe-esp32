@@ -1,6 +1,6 @@
 // The maintenance course: ten full-screen flats in the panel's own native colours.
 //
-// Ticket 68, the operator's request of 2026-09-20 -- a service mode that "ignores the palette and
+// Ticket 68, the owner's request of 2026-09-20 -- a service mode that "ignores the palette and
 // steps the panel through the standard colours it can show, in order", like an LCD's R-G-B service
 // screen. The order is the whole of what this file holds, and it is here rather than in
 // src/app/app_maint.c so the host suite can pin it without an ESP-IDF in sight.
@@ -9,13 +9,13 @@
 // the obvious physics story is wrong here. There is no "hard transition" to sequence around: the
 // DRF is a fixed-length global waveform -- epd_format.c models it as a constant 926,000
 // frame-seconds with no image term, and it measures the same ~14.5 s at stock FRS across colour
-// charts, photographs and 1-bit screens alike (docs/agents/measurements.md). Every refresh drives
+// charts, photographs and 1-bit screens alike (docs/measurements.md). Every refresh drives
 // all six pigments through the full cycle regardless of what was on the glass, so no sequence is
 // electrically kinder to the panel than another.
 //
 // What forces an order is the MEASURED GHOST. A 1-bit black-on-white pairing screen stayed plainly
 // legible through the next full refresh, and **only a white render in between removed it
-// completely** (docs/agents/measurements.md:123-133, ticket 30). A flat inspected straight after
+// completely** (docs/measurements.md:123-133, ticket 30). A flat inspected straight after
 // another flat therefore carries the previous one -- which defeats the entire purpose of a mode
 // whose output a person looks at. Hence white between every pair.
 //
@@ -60,7 +60,7 @@ const char *epd_maint_colour_name(uint8_t colour);
 //
 // A SECOND sequence, and a different job from the course above: W B W B W B W, three black passes
 // each bracketed by white. The course is for a person to LOOK at; this is for a panel that has kept
-// a faint trace of a previous picture. Operator's request, 2026-09-20.
+// a faint trace of a previous picture. Owner's request, 2026-09-20.
 //
 // **Seven refreshes and not nine.** "White, black, white, three times" shares the whites between
 // cycles, because two consecutive identical white renders clear nothing the first one did not and
@@ -73,12 +73,12 @@ const char *epd_maint_colour_name(uint8_t colour);
 //
 // **WHAT IS NOT KNOWN: whether this removes a ghost that one white render did not.** One white IS
 // measured to remove a plainly legible 1-bit black-on-white ghost completely (2026-09-10, ticket 30,
-// `docs/agents/measurements.md`), so the escalation exists for the case beyond that one — and that
-// case has never been produced here, deliberately: the operator declined to manufacture a ghost to
+// `docs/measurements.md`), so the escalation exists for the case beyond that one — and that
+// case has never been produced here, deliberately: the owner declined to manufacture a ghost to
 // test it (2026-09-20). So this is a mechanism offered on the vendor precaution and the physics of a
 // full-frame DRF, **not a measured remedy**, and nothing may cite it as one.
 // **REPEATABLE since 2026-09-20, and the repeat is free because the sequence is an alternation.**
-// The operator asked for a continuous mode; what shipped is a bounded count, because time is the
+// The owner asked for a continuous mode; what shipped is a bounded count, because time is the
 // wrong unit for this — 8 h of continuous clearing is 1,920 refreshes on the M5Paper Color and 932
 // on the ED2208-GCA, so the same "two hours" costs twice as much on one board as the other, and
 // either number is two orders of magnitude past the ~16 automatic advances a day this frame does.

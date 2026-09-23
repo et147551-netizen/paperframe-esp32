@@ -57,7 +57,7 @@
 // --------------------------------------------------------------- buttons and LED
 //
 // The buttons are named by POSITION, not by letter: the case carries no A/B/C markings, and
-// the operator settled the layout on the unit on 2026-09-03. A board whose buttons are
+// the owner settled the layout on the unit on 2026-09-03. A board whose buttons are
 // labelled differently maps its own three onto the same three roles in board_buttons.h --
 // the reTerminal E1002's green / left / right, for instance.
 #define BOARD_BTN_TOP_GPIO 1  // the one on its own at the top

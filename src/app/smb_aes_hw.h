@@ -1,4 +1,4 @@
-// The switch for src/smb_aes_hw.c's linker wrap. See that file for what the wrap is for.
+// The switch for src/app/smb_aes_hw.c's linker wrap. See that file for what the wrap is for.
 //
 // It exists so that "hardware AES is 1.6x" is a measurement rather than an interpolation
 // across two runs, and so that "depth > 1 fails at the shipping TCP window" can be tested

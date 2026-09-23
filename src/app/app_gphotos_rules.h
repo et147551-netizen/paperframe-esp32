@@ -1,7 +1,7 @@
 // The Google Photos scrape rules on the device: which set is in force, a newer one on trial, where
 // rule files come from, and whether their signature holds.
 //
-// Designed in the scrape-rules plan. The operator's rules of 2026-09-13:
+// Designed in the scrape-rules plan. The owner's rules of 2026-09-13:
 //
 //   * A RULE FILE IS SIGNED (ECDSA P-256 over SHA-256, the public key compiled in from
 //     gphotos_rules_pubkey.h) and one that does not verify is never used, however it arrived.

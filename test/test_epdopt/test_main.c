@@ -1,4 +1,4 @@
-// Parity tests for the epdoptimize port: does src/epd_epdopt.c produce the same bytes as
+// Parity tests for the epdoptimize port: does src/core/epd_epdopt.c produce the same bytes as
 // epdoptimize does?
 //
 // Run: ~/.platformio/penv/Scripts/pio.exe test -e native

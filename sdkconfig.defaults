@@ -106,7 +106,7 @@ CONFIG_ESP_MAIN_TASK_STACK_SIZE=4608
 # ESP_ERR_HTTPD_TASK. The remaining dip is transient Wi-Fi RX burst allocation.
 
 # 240 MHz, and a 64-byte data cache line. Measured 2026-09-05; the account, the four-shape
-# memory floor and both arms' controls are in docs/agents/measurements.md.
+# memory floor and both arms' controls are in docs/measurements.md.
 #
 # **Neither of these was ever chosen.** Both were absent from this file and arrived as ESP-IDF
 # defaults, the same category as the -Og that every timing figure in this repository was taken at.

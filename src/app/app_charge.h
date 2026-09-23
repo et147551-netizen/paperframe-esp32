@@ -1,4 +1,4 @@
-// The battery charge cap: ticket 71, the operator's longevity request of 2026-09-20.
+// The battery charge cap: ticket 71, the owner's longevity request of 2026-09-20.
 //
 // **This module is policy only. `board_charger_set_vreg_mv()` is the mechanism** and owns the one
 // safety property that matters -- it cannot raise the termination voltage above the value the part
@@ -65,7 +65,7 @@ typedef struct {
     //
     // This used to cite a bus "taking turns by luck", **which was wrong** -- the IDF i2c_master
     // driver serialises transactions on a bus with its own mutex (ticket 76,
-    // docs/agents/board-and-storage.md). The reason above is cost, not safety, and it still holds.
+    // docs/board-and-storage.md). The reason above is cost, not safety, and it still holds.
     board_charger_t last;
     bool last_valid;
     uint32_t last_age_ms;

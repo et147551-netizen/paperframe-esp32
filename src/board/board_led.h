@@ -3,7 +3,7 @@
 // Part of ticket .scratch/digital-frame/issues/16 (FR-9.1, FR-9.2), taken early and on
 // purpose: with no LED and no sound, **there is no way to tell whether this board is
 // switched on**. The panel holds its last image without power, the console is silent, and
-// esptool talks to a board that is off — so on 2026-09-03 the operator had to open
+// esptool talks to a board that is off — so on 2026-09-03 the owner had to open
 // Windows Device Manager to find out whether a power-button press had worked.
 //
 // Two facts about the hardware, both from docs/board-pinmap.md and refs/_pm1.txt:
@@ -54,7 +54,7 @@ typedef enum {
     // Deliberately NOT an extension of BOARD_LED_ERROR, which is transient by design and
     // whose caller at app_display.c:705 wants it that way: a failed render retries on the
     // next advance and the one-second fade is the right shape for that. This state is for the
-    // two faults nothing will clear by itself, chosen by the operator on 2026-09-10 from the
+    // two faults nothing will clear by itself, chosen by the owner on 2026-09-10 from the
     // survey in ticket 55 §4: httpd_start() failed, so there is no web UI at all, and /data
     // did not mount. Both are invisible on the panel -- the frame draws the four factory
     // photographs and looks healthy -- and the first cannot be reported over HTTP by
@@ -89,9 +89,8 @@ board_led_state_t board_led_get(void);
 // It is here because this task is the only thing in the application that already wakes at that
 // rate, and ticket 47's internal-RAM sampler needs a clock more than it needs a task -- a task of
 // its own would take a 2 KB stack out of the pool it is watching, and
-// docs/agents/board-and-storage.md records that two small tasks were once enough to make
-// httpd_start() fail. What the borrowing costs the
-// measurement is in app_heapwatch.h: this task runs at priority 3, below the display task and
+// docs/board-and-storage.md records that two small tasks were once enough to make
+// httpd_start() fail. What the borrowing costs the measurement is in app_heapwatch.h: this task runs at priority 3, below the display task and
 // smbsync, so it is not a fair sampler of a trough those two hold the CPU through.
 //
 // The hook must not block and must not assume it can log: it runs on a 1.5 KB stack alongside a

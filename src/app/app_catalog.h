@@ -3,7 +3,7 @@
 //
 // Ticket 60, FR-10.3. Until 2026-09-13 the slideshow's catalogue epoch called the SMB module
 // directly, so the only on-demand source there could be was an SMB share. The Google Photos album
-// became a second one when the operator asked for its photographs to be fetched one at a time
+// became a second one when the owner asked for its photographs to be fetched one at a time
 // like the share's rather than mirrored ("SMBと同じく都度"), and both have to be selectable
 // without either being privileged.
 //

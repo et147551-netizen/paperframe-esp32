@@ -31,7 +31,7 @@ the task rather than loaded every session. Nothing here was rewritten.
 > `renderRoute()` refuses to navigate away from it. **A cookie rather than a header because the photo grid loads thumbnails as
 plain `<img src>` tags**, which cannot carry one — `?t=<token>` on `/` is what turns a
 pairing URL into that cookie. > **FIXED 2026-09-11, and the paragraph below is kept because its warning still governs the fix.**
-> The operator decided the security question this had been parked on: **the AP is closed to WPA2
+> The owner decided the security question this had been parked on: **the AP is closed to WPA2
 > first, and then the portal redirect carries the token** (ticket `30` step 2). `h_static_serve()`
 > answers a foreign `Host` with a `302` to `http://192.168.4.1/?t=<token>` when **three** things hold
 > — the Host is not ours, `board_wifi_ap_secured()` says the radio is encrypted *now*, and
@@ -85,7 +85,7 @@ window, not per request, so a fresh boot reports the count from the first window
 has to use. Fixed 2026-09-06; the lesson is that a 401 here can mean "your URL was too long".
 **And it can also mean "your shell ate the token"** — the console prints `# 401 from <ip> <uri>`
 *including the query*, so read that line for an empty `t=` before blaming auth. The quoting trap
-that did it twice on 2026-09-09 is in `docs/agents/hardware-runs.md`.
+that did it twice on 2026-09-09 is in `docs/hardware-runs.md`.
 
 **A handler must not remove the link its own reply travels over, and 500 ms of slack is not
 enough — it has to be a floor.** `h_wifi_config()` used to call `board_wifi_connect()`, which
@@ -228,9 +228,9 @@ black passes each bracketed by white, ending white — ~1.8 min here and ~3.6 mi
 `503` mutual exclusion as the course, and it needs no leading white because its own first step is one.
 **It is a mechanism and not a measured remedy**: one white render is measured to remove a plainly
 legible ghost completely, this is for the case beyond that, and that case has never been produced on
-this bench because the operator declined to manufacture a ghost to test it.
+this bench because the owner declined to manufacture a ghost to test it.
 
-**`clear` takes an optional `cycles`, 1..5, default 1** — the operator asked for a *continuous* mode and
+**`clear` takes an optional `cycles`, 1..5, default 1** — the owner asked for a *continuous* mode and
 this is what it became. A duration was rejected because it is not board-independent: 8 h of continuous
 clearing is 1,920 refreshes on the M5Paper Color and 932 on the E1002, so the same "two hours" costs
 twice as much on one board as the other, and either number is two orders of magnitude past the ~16
@@ -275,7 +275,7 @@ the last run ends, held outside active hours — and once 90 s after boot.
 `ok`. `fetched`, `failed`, `deleted` and `evicted` count since boot; `owned` is photographs kept on
 `/data` and `want_pending` is a photograph the slideshow has asked for (on demand since 2026-09-13).
 `albums[i].reverted` / `reverted_reason` / `reverted_http` say that a NEWLY saved link in that slot
-could not be read or held no photograph and its last good link was put back (the operator's rule,
+could not be read or held no photograph and its last good link was put back (the owner's rule,
 ticket `60` §3e); a save, Sync now, or that slot's next whole read clears them. **A save only queues
 the album read for the next 10-second tick**, so a status read straight after a save still describes
 the previous run.
@@ -418,7 +418,7 @@ this handler holds it for the sensor's conversion.
 
   So: **on SD a figure from inside a refresh window is unreachable over HTTP and needs firmware; on
   internal flash it is reachable in tens of milliseconds.** Never state it unqualified — and note that
-  which board is on which medium is **a property of today** (`docs/agents/hardware-runs.md`: since
+  which board is on which medium is **a property of today** (`docs/hardware-runs.md`: since
   2026-09-22 each board has a card, and moving one needs hands).
 
   **If you find yourself deriving this from `board_storage.c` again, stop and open ticket `03`.** The
@@ -436,7 +436,7 @@ this handler holds it for the sensor's conversion.
 - **`sensors.temp_c` and `humidity_pct` are absent together when the read failed**, never 0. This
   handler is `board_sht40_read()`'s first caller in the application, and being the first to call it
   *repeatedly* is what exposed a wait that was right less than half the time — see
-  `docs/agents/defect-log.md` 2026-09-18.
+  `docs/defect-log.md` 2026-09-18.
 - **`network.ap.secured` asks the radio, not the build flag**, the same question the portal redirect
   asks before it will part with the token.
 - **`network.ap.up` and `window_s` are ticket `67`, and `up` is the one to read first.** The access
@@ -483,36 +483,19 @@ looks like it should** (measured 2026-09-07). A handler that blocks blocks *ever
   can hold anything.
 - **No HTTP-side observable can isolate a lock from httpd's own queueing.** An A/B built to
   show one was measuring the other, and the give-away was only visible because the control
-  request touched no storage. `docs/agents/measurements.md` has it.
+  request touched no storage. `docs/measurements.md` has it.
 
-**The bench, and what it can reach.** This PC is `192.168.1.10` on `LAN1` by wire, which is
-also where the SMB test share lives, so an `env:frame` that comes up as a station is
-reachable from here over Ethernet with no Wi-Fi at all — the whole API sweep is within reach
-of an unattended run. `env:smbprobe` writes its station credentials into the Web UI's own
-NVS keys so a later `env:frame` flash comes up on the LAN. The browser is drivable from here
-too, through a browser-automation extension.
+**`env:smbprobe` writes its station credentials into the Web UI's own NVS keys**, so a later
+`env:frame` flash comes up on the LAN without anyone configuring it.
 
-**This PC cannot join a Wi-Fi network from a command line, and that is permanent.** `netsh
-wlan connect` needs the machine's location permission; `ConsentStore\location` is `Deny`
-under both HKLM and HKCU and the deny is **group-policy managed**
-(`HKLM\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors`, `DisableLocation=1`), so it
-is not a Settings toggle and not writable without admin. Even `netsh wlan show interfaces` is
-refused. **So nothing unattended should plan on `192.168.4.1`.**
-
-**But the operator can join by hand, and it is worth asking for.** Once joined, Wi-Fi
-`192.168.4.2` and Ethernet `192.168.1.10` are live at once, so the same request can be put
-through both surfaces and compared — which found more bugs in one sitting than the whole LAN
-sweep did. Ask for it whenever something AP-shaped needs observing. Batch that work: a
-reflash drops the AP and Windows does not rejoin by itself, so warn the operator first.
-
-**The house AP leads with WPA3-Personal**, which an ESP32-S3 station will associate to and
+**An access point that leads with WPA3-Personal** is one an ESP32-S3 station will associate to and
 then fail in the 4-way handshake with `reason=204`, looking exactly like a wrong password.
 `sae_pwe_h2e = WPA3_SAE_PWE_BOTH` plus `pmf_cfg.capable` fixes it and is in
 `src/app/board_wifi.c`.
 ## The photo grid: thumbnails, a cache header, and one `stat()` that was free to delete
 
 Three changes on 2026-09-07, all in `src/app/app_server.c`. The evidence is in
-`docs/agents/measurements.md`; read it before touching `send_file()`, `h_photos_list()` or
+`docs/measurements.md`; read it before touching `send_file()`, `h_photos_list()` or
 `h_thumb_serve()`.
 
 - **`GET /thumb/<name>` serves a re-encoded 192×336 JPEG where the grid used to fetch the
@@ -525,7 +508,7 @@ Three changes on 2026-09-07, all in `src/app/app_server.c`. The evidence is in
   **The pixels are verified, 2026-09-08** — a JPEG-in and a PNG-in thumbnail were fetched from the
   device beside their originals and both reproduce composition, colour and crop, so
   `esp_new_jpeg`'s silent column-wrap-on-misaligned-input does not occur here. This had been recorded
-  as needing the operator's eyes because "there is no JPEG decoder on this host", which is true of
+  as needing the owner's eyes because "there is no JPEG decoder on this host", which is true of
   every scriptable path and irrelevant: **the `Read` tool displays an image file.** Before writing a
   check off as impossible here, ask whether it has to be scriptable.
 - **The ceiling is the decoder's own `EPD_IMAGE_MAX_FILE_BYTES` (6 MB), not `send_file()`'s 2 MB**
@@ -534,7 +517,7 @@ Three changes on 2026-09-07, all in `src/app/app_server.c`. The evidence is in
   PSRAM is 503, each with one `ESP_LOGW`. **It is a JPEG ceiling**, so a 6-12 MB non-interlaced PNG
   stays displayable and untileable. A large tile costs **~15 s** — read plus whole-image decode, the
   reduce and encode being 67 ms — and the watchdog fires in the **`httpd`** task on each one.
-  Figures and the three collision arms: `docs/agents/measurements.md` 2026-09-09.
+  Figures and the three collision arms: `docs/measurements.md` 2026-09-09.
 - **It costs 1.2-1.4 s a thumbnail for the SHARE's files and ~810 ms of that is a floor.**
   `epd_image`'s JPEG path
   decodes the **whole** image at open (`epd_image.c:463`), and `epd_image_open_mem_fit()` was
@@ -562,7 +545,7 @@ Three changes on 2026-09-07, all in `src/app/app_server.c`. The evidence is in
   FIFO eviction would leave it orphaned outside `.smbidx`. Ticket `49` answers both — a
   `.thm` suffix and `delete_local()` — and so `smb_resize` does write a sidecar there;
   the ruling was against the *naming and the orphan*, not against the location. **Since
-  2026-09-23 "there" is `/data/.thumbs/`** (`docs/agents/smb-mirror.md`), and `/thumb/<name>` is
+  2026-09-23 "there" is `/data/.thumbs/`** (`docs/smb-mirror.md`), and `/thumb/<name>` is
   the only route that reads it. **The PSRAM LRU is
   no longer wanted** (2026-09-10): the population it was for was uploads, and uploads now write a
   sidecar of their own, leaving four factory PNGs and pre-`49` imports — not a card. Ticket `48`
@@ -581,7 +564,7 @@ Three changes on 2026-09-07, all in `src/app/app_server.c`. The evidence is in
   figure recorded here, against ~72 KB idle, with the largest listing, a 6.5 MB upload and a
   1.47 MB PNG render each tested and excluded. **The heartbeat prints the minimum without the
   moment**, which is why the log cannot close it; a one-line `ESP_LOGW` on `int_free` crossing a
-  floor would. Details in `docs/agents/measurements.md`.
+  floor would. Details in `docs/measurements.md`.
 - **`send_file()` sets `Cache-Control: private, max-age=86400`, and no validator.** `ETag` and
   `Last-Modified` both need `stat()`, which is the 22-38 ms call below. The staleness this
   accepts is the catalogue's documented same-local-name ambiguity, whose worst case is a wrong
@@ -666,7 +649,7 @@ only when the object is present, so the frame that cannot obey the setting does 
 more I²C transactions per request, from the task holding the server's only worker, is not worth a
 fresher battery icon. **The reason is cost and not safety** — until 2026-09-21 this paragraph cited a
 bus "taking turns by luck", and that was wrong: the IDF `i2c_master` driver serialises transactions
-on a bus with a mutex of its own (ticket `76`, `docs/agents/board-and-storage.md`).
+on a bus with a mutex of its own (ticket `76`, `docs/board-and-storage.md`).
 
 ## Request identity: the path-traversal guard, and the one thing it does NOT do
 

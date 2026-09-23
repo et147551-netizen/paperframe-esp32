@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Six-colour chart patch means from flatbed scans, and pairwise deltas.
 
-The harness (`src/harness_main.c`) draws a 2x5 chart per arm at the end of a run and
+The harness (`src/entry/harness_main.c`) draws a 2x5 chart per arm at the end of a run and
 `tools/bringup_capture.py --scanner` scans each one, so a sweep leaves one BMP per
 setting with nothing having moved on the bed between them. This reads those BMPs and
 prints the mean RGB of each patch, plus the per-channel delta of every later scan
@@ -35,7 +35,7 @@ PANEL = (0.095, 0.031, 0.705, 0.765)  # x0, y0, x1, y1
 INNER = 0.55
 COLS, ROWS = 2, 5
 
-# The chart in src/harness_main.c, in scan order.
+# The chart in src/entry/harness_main.c, in scan order.
 NAMES = ["WHITE", "BLACK", "RED", "YELLOW", "GREEN", "BLUE", "WHITE2", "BLACK2",
          "BLACK3", "WHITE3"]
 

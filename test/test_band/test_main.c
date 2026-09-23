@@ -2,7 +2,7 @@
 // content wins them, and that drawing it can never touch the photograph.
 //
 // **The rule under test changed on 2026-09-19**: the band lies along the bottom of the GLASS, or
-// there is none and the photograph is centred (ticket 64, after the operator looked at five samples).
+// there is none and the photograph is centred (ticket 64, after the owner looked at five samples).
 // So most of what these tests assert is about the logical-to-physical mapping, which is the part that
 // was wrong before: the band went wherever the leftover was, which put it down the panel's right edge
 // for a 9:16 source and across its top for a turned 4:3 one.
@@ -79,7 +79,7 @@ static void test_the_probe_refuses_nonsense(void)
 
 // ---------------------------------------------------------------------- the geometry
 
-// The operator's first requirement, and the one thing here that must not change: the band never
+// The owner's first requirement, and the one thing here that must not change: the band never
 // makes the photograph smaller. Asserted across every sample rather than argued once.
 static void test_the_photograph_is_never_smaller_than_centred(void)
 {
@@ -135,7 +135,7 @@ static void test_a_square_source_bands_generously_along_the_bottom(void)
     TEST_ASSERT_EQUAL_INT32(200, band.height);
 }
 
-// **The case the operator rejected.** A 9:16 source on a portrait panel leaves its blank at the
+// **The case the owner rejected.** A 9:16 source on a portrait panel leaves its blank at the
 // SIDES, which cannot become a band along the bottom -- so there is none and the photograph stays
 // centred, blank on both sides, exactly as it was before any of this existed.
 static void test_a_nine_to_sixteen_source_gets_no_band_and_stays_centred(void)
@@ -150,7 +150,7 @@ static void test_a_nine_to_sixteen_source_gets_no_band_and_stays_centred(void)
     TEST_ASSERT_EQUAL_INT32(31, fit.x);
 }
 
-// **The other case the operator rejected, and the one that proves the probe earns its keep.** A 4:3
+// **The other case the owner rejected, and the one that proves the probe earns its keep.** A 4:3
 // source turns the canvas, so its leftover is on the LOGICAL x axis -- which at rotation 1 runs down
 // the glass. The band is therefore possible, and it has to land at the glass's bottom rather than its
 // top, which is where passing the alignment through in logical terms used to put it.
@@ -192,7 +192,7 @@ static void test_a_bad_plan_yields_no_band(void)
 
 // ------------------------------------------------------------- capacity and the scale
 
-// The thin-side rule (operator, 2026-09-19): a band too thin for scale 4 gets smaller text rather
+// The thin-side rule (owner, 2026-09-19): a band too thin for scale 4 gets smaller text rather
 // than nothing. Scale 4 is the ceiling and scale 2 the floor -- 7 px is about 1 mm here.
 static void test_the_large_scale_follows_a_thin_band_and_caps_at_four(void)
 {
@@ -299,7 +299,7 @@ static void test_a_four_hundred_pixel_band_drops_the_country_and_keeps_the_date(
     TEST_ASSERT_EQUAL_INT(EPD_BAND_SEG_TEXT, l.segments[0].kind);
 }
 
-// **A thicker band shows exactly the same line.** That is the operator's decision of 2026-09-19 --
+// **A thicker band shows exactly the same line.** That is the owner's decision of 2026-09-19 --
 // one line always, and a band with room to spare keeps its white rather than growing the type --
 // and it is pinned here because it is the surprising half: a 200 px band and a 67 px band produce
 // identical content, so anyone reading a generous band as under-filled is reading the decision.
@@ -330,9 +330,9 @@ static void test_a_thick_band_shows_the_same_single_line(void)
 // showed one line and dropped the room and the battery for want of a second.
 //
 // **Until 2026-09-22 this band held the country and not `ago`** (`TOKYO JAPAN 19-08-14`, three
-// segments). The battery icon then shrank to two thirds of the line at the operator's request, the
+// segments). The battery icon then shrank to two thirds of the line at the owner's request, the
 // length it gave back admits `ago`, and `ago` outranks the country, which is spliced last and only
-// into what is left. The operator chose the years over the country when asked.
+// into what is left. The owner chose the years over the country when asked.
 static void test_an_eight_hundred_pixel_band_carries_all_four_segments(void)
 {
     const epd_band_t band = mk_band(EPD_BAND_HORIZONTAL, 800, 30, true);
@@ -367,7 +367,7 @@ static void test_the_country_is_spliced_only_when_the_whole_line_has_room(void)
     TEST_ASSERT_EQUAL_INT32(3, l.count);
 }
 
-// **A long city name is CUT to fit and the excess discarded** (operator, 2026-09-20). It used to be
+// **A long city name is CUT to fit and the excess discarded** (owner, 2026-09-20). It used to be
 // refused, which on a 400 px band lost the city and the capture date together to a name of fourteen
 // characters -- the band fell through to the room and the photograph said nothing at all.
 static void test_a_long_city_name_is_cut_to_fit(void)

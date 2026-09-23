@@ -1048,7 +1048,7 @@ whatever the footer says.
                 </div>
                 </div>
 
-                <!-- Auto adjust overrides this choice on the device (src/app_display.c:342),
+                <!-- Auto adjust overrides this choice on the device (src/app/app_display.c:342),
                      so the control is disabled and says so rather than pretending. -->
                 <!-- The second -html key on the page: the emphasis on "without" is the sentence's
                      whole point, so it travels with the string rather than being dropped. -->
@@ -2815,7 +2815,7 @@ let compositionImages = [];
 let selectedImageId = null;
 let nextCompositionImageId = 1;
 const PREVIEW_MAX_SCALE = 10;
-// The ordered-bias constants, from Panel_ED2208.cpp:189-193 by way of src/epd_dither.c:325-328.
+// The ordered-bias constants, from Panel_ED2208.cpp:189-193 by way of src/core/epd_dither.c:325-328.
 // Fixed by the algorithm, so they live here; the palette, the tone amount and the dither
 // strength are *settings* and arrive with /api/mode/mode_1/config instead — see
 // currentInkTables().
@@ -3311,7 +3311,7 @@ function currentInkTables() {
   return { match, screen, tone: p.tone, strength };
 }
 
-// src/epd_dither.c's tone_compress()/apply_tone(). Integer division truncating toward zero,
+// src/core/epd_dither.c's tone_compress()/apply_tone(). Integer division truncating toward zero,
 // which is what C does and what Math.trunc does — the inputs here can be negative, because the
 // ordered bias is added before this and is deliberately not clamped.
 function toneCompress(v, lo, hi, amount) {
@@ -3330,7 +3330,7 @@ function applyInkTone(t, rgb) {
   ];
 }
 
-// src/epd_dither.c's epd_nearest_index_cfg(): squared RGB distance, strict `<` so ties go to
+// src/core/epd_dither.c's epd_nearest_index_cfg(): squared RGB distance, strict `<` so ties go to
 // the earlier entry, and white as the value before any comparison has run.
 function inkNearestIndex(match, r, g, b) {
   let minDistance = Infinity;
@@ -3348,7 +3348,7 @@ function inkNearestIndex(match, r, g, b) {
   return best;
 }
 
-// src/epd_dither.c's pair_index_cfg(): all 36 combinations, scored by the error of the pair
+// src/core/epd_dither.c's pair_index_cfg(): all 36 combinations, scored by the error of the pair
 // summed together plus each pixel's own squared error. Returns the two indices.
 function inkPairIndices(match, r0, g0, b0, r1, g1, b1) {
   const n = match.length;
@@ -3379,7 +3379,7 @@ function inkPairIndices(match, r0, g0, b0, r1, g1, b1) {
   return best;
 }
 
-// src/epd_dither.c's epd_dither_row_quality_cfg(), pixel for pixel: ordered bias, then tone
+// src/core/epd_dither.c's epd_dither_row_quality_cfg(), pixel for pixel: ordered bias, then tone
 // compression, then the pair search. Two things here look like bugs and are not, because the
 // device does them: the biased value is **not clamped** to 0-255 before matching, and the bias
 // is applied before the compression rather than after — the amplitude is tuned against a 0-255
@@ -3455,7 +3455,7 @@ function quantizeToEpdPalette(imageData, t) {
   }
 }
 
-// src/epd_dither.c's epd_dither_row_none_cfg(): tone compression, then one independent nearest
+// src/core/epd_dither.c's epd_dither_row_none_cfg(): tone compression, then one independent nearest
 // match per pixel. No bias, so no dither texture — this is the `imageN` path.
 function quantizeToEpdPaletteNearest(imageData, t) {
   const { data } = imageData;
@@ -5317,7 +5317,7 @@ function resetTransform() {
   fitImageToContainer(layer, true);
 }
 
-// src/app_display.c:342 replaces the filename's nearest/dither decision with the auto flow's
+// src/app/app_display.c:342 replaces the filename's nearest/dither decision with the auto flow's
 // own whenever auto_adjust is on, so offering the choice here would be a lie. The chosen value
 // is still sent with the upload: it lives in the filename prefix and applies again if the
 // setting is turned back off.
@@ -5415,9 +5415,9 @@ function exportToCanvas() {
 // exportToCanvas() returns the whole 600x400 canvas, white matte included, because that is
 // what the preview has to show. Uploading it bakes FR-5.3's matte into the file, and the
 // frame cannot then tell it from a picture that really has a white border: render_image()
-// derives the auto flow's region from the file's own dimensions (src/app_display.c:337-338),
+// derives the auto flow's region from the file's own dimensions (src/app/app_display.c:337-338),
 // so a matted 600x400 upload makes that region the entire canvas and defeats the exclusion
-// src/app_display.c:221-224 exists for.
+// src/app/app_display.c:221-224 exists for.
 //
 // Measured on the host 2026-09-06, imaged003 and imaged004, contain-fitted content against
 // the same content matted: highContrastPhoto/photo become flatIllustration, photo_score
@@ -5449,7 +5449,7 @@ function exportUploadCanvas() {
   if (dw < 1 || dh < 1) return exportToCanvas();
 
   // Crop only when the drawn rectangle reaches exactly one edge of the canvas, which is the
-  // case where the frame's own fit reproduces it. epd_fit_centre() (src/epd_dither.c:403-419)
+  // case where the frame's own fit reproduces it. epd_fit_centre() (src/core/epd_dither.c:403-419)
   // has **no** upscale cap, while fitImageToContainer()'s contain fit does -- the `, 1` in
   // baseFitScale. So a source small enough for that cap to bite is matted by the browser and
   // would be blown up to full bleed by the device: cropping there would make the panel

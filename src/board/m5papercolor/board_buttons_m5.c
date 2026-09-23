@@ -1,6 +1,6 @@
 // The M5Paper Color's three side buttons: which pin is which position.
 //
-// docs/board-pinmap.md for the pins; the positions are the operator's, read off the unit on
+// docs/board-pinmap.md for the pins; the positions are the owner's, read off the unit on
 // 2026-09-03, because the case carries no A/B/C markings. That answers Open question 1 in
 // docs/requirements/digital-frame.md, and it means the shipping firmware's own assignment does
 // not map onto the positions the way its usage page describes: the firmware puts the

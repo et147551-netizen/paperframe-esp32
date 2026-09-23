@@ -1,8 +1,8 @@
 // Floyd-Steinberg error diffusion in integers, for the device.
 //
-// This is to src/epd_epdopt.c's diffusion stage what src/epd_adjust.c is to its first two: the
+// This is to src/core/epd_epdopt.c's diffusion stage what src/core/epd_adjust.c is to its first two: the
 // same function, rewritten to be affordable on this board. The port measured **11.2 s** a
-// photograph for the diffusion alone (docs/agents/measurements.md:181-190, from 23 966 ms with
+// photograph for the diffusion alone (docs/measurements.md:181-190, from 23 966 ms with
 // diffusion against 12 826 ms without, one capture, same picture) and its cost is not the
 // algorithm -- the inner loop is `double` on a single-precision FPU, and epd_clamp_byte() does an
 // `isfinite` and a `floor` twelve times per pixel.

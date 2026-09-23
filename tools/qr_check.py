@@ -69,7 +69,7 @@ def decode_all(img):
 # screen are secrets**: the join URI carries the access point's WPA2 password and the pairing URL
 # carries the API token. The --expect-url-prefix check below was always careful not to print the
 # token; the raw dump above it printed both whole, which is the same defect the firmware had at
-# ESP_LOG_INFO (ticket 66, docs/agents/defect-log.md). So nothing from a decoded string reaches
+# ESP_LOG_INFO (ticket 66, docs/defect-log.md). So nothing from a decoded string reaches
 # stdout except its shape.
 _SECRET_AFTER = ("P:", "?t=", "&t=")
 

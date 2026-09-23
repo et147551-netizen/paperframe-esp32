@@ -57,7 +57,7 @@ DEFAULT_ROIS = RUN_DIR / "rois.json"
 INNER_FRACTION = 0.6
 SAMPLE_GRID = 25  # 625 samples per patch
 
-# Rows 0 and 4 of the chart are the in-frame reference pair (src/colour_chart_main.c).
+# Rows 0 and 4 of the chart are the in-frame reference pair (src/entry/colour_chart_main.c).
 REF_ROWS = (0, 4)
 
 PALETTE_NAMES = {0: "black", 1: "white", 2: "yellow", 3: "red", 5: "blue", 6: "green"}

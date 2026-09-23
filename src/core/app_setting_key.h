@@ -7,7 +7,7 @@
 // **It lives in src/core/ rather than in app_settings.h, which is where it was until 2026-09-21,
 // for one reason: it is a name and nothing else.** app_setting_effect.h needs to be keyed by these
 // names and is host-tested, so it cannot include app_settings.h -- that header names esp_err_t and
-// src/core/ is ESP-IDF-free by construction (docs/agents/board-and-storage.md has the layer map).
+// src/core/ is ESP-IDF-free by construction (docs/board-and-storage.md has the layer map).
 // The alternative was a second enum of the same settings under different names, which is the exact
 // duplication app_setting_effect.h exists to remove, and the compiler found the collision on the
 // first build. app_settings.h includes this file, so every existing user sees the enum unchanged.

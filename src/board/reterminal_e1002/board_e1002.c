@@ -11,7 +11,7 @@
 //   * NO PM1. There is no power-manager IC mediating rails. The panel has no switchable rail
 //     at all, the card's is a plain GPIO, and battery voltage comes from the SoC's own ADC.
 //   * TWO I2C buses, because the charger is only fitted from hardware revision V1.2 and lives
-//     on its own. The revision cannot be chosen at purchase (operator, 2026-09-15), so it is
+//     on its own. The revision cannot be chosen at purchase (owner, 2026-09-15), so it is
 //     PROBED. A pre-V1.2 unit carries a non-I2C ETA6003 and costs exactly one thing: it cannot
 //     tell external power from battery. Everything else works.
 //   * NO CARD DETECT. See board_card_present().

@@ -11,7 +11,7 @@ A build without it FAILS rather than producing an unsigned image, because an uns
 board that needs USB again before it can be updated.
 
 espsecure.py needs cryptography, ecdsa, intelhex, pyserial, reedsolo, bitstring and pyyaml, and
-PlatformIO's ESP-IDF venv ships only the first. docs/agents/build-system.md has the one-line
+PlatformIO's ESP-IDF venv ships only the first. docs/build-system.md has the one-line
 install.
 """
 

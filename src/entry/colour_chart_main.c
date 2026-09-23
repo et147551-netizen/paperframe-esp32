@@ -24,7 +24,7 @@
 //
 // The run is long and unattended, so it refuses to start on battery. bringup_main.c only
 // warns; here, six hours on a cell that the PM1 cuts at 2.50 V ends with a board that no
-// software anywhere can restart (docs/agents/hardware-runs.md).
+// software anywhere can restart (docs/hardware-runs.md).
 
 // Only one entry point may be linked; platformio.ini picks it with a build flag.
 #ifdef BUILD_COLOURCHART
@@ -192,7 +192,7 @@ void app_main(void)
     if (pwr_err != ESP_OK || !pwr.vin_present) {
         printf("# REFUSING TO RUN: this is a multi-hour unattended run and USB power is\n"
                "#   not confirmed. The PM1 cuts the board off below BATT_LVP and nothing\n"
-               "#   but the power button restarts it. See docs/agents/hardware-runs.md.\n");
+               "#   but the power button restarts it. See docs/hardware-runs.md.\n");
         printf("@@DONE\n");
         fflush(stdout);
         return;

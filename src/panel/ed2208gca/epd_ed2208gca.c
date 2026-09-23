@@ -15,7 +15,7 @@
 //
 // One file with both would be a chain of conditionals through the middle of the one function
 // whose exactness is the whole point, and epd_el040ef1.c's sequence is the reference every
-// figure in docs/agents/measurements.md is compared against. The duplication is ~200 lines and
+// figure in docs/measurements.md is compared against. The duplication is ~200 lines and
 // is the cheaper mistake.
 //
 // NO TIMING FIGURE APPEARS IN THIS FILE. The timings struct is filled because callers read it,

@@ -19,7 +19,7 @@
 static const char *TAG = "gprules";
 
 // Its own namespace, not app_settings' "papercolor": nothing here belongs in app_settings_t, which
-// is copied whole onto main's stack (docs/agents/board-and-storage.md).
+// is copied whole onto main's stack (docs/board-and-storage.md).
 #define NVS_NS "gprules"
 #define KEY_TEXT "text"  // the adopted file, signature line included
 #define KEY_SRC "src"

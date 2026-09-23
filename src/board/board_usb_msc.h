@@ -6,7 +6,7 @@
 //   * The M5Paper Color's USB-C has ONE internal PHY. tinyusb_driver_install() takes it from
 //     USB-Serial-JTAG, so COM11's console and esptool's auto-reset disappear for as long as the
 //     drive is up. A mode that is only up when somebody asked for it keeps them the rest of the
-//     time (operator, 2026-09-22: on demand, from a Web UI button, not always-on).
+//     time (owner, 2026-09-22: on demand, from a Web UI button, not always-on).
 //   * While the host owns the volume NOTHING of the application runs -- no slideshow, no mirror,
 //     no upload, no Wi-Fi. So there is no race between the host's FAT and ours to decide: it
 //     cannot happen, and board_storage_prepare_access()'s reclaim never yanks the drive from a

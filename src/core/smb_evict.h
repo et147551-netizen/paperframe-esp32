@@ -6,7 +6,7 @@
 // that carries the rule -- never evict what the panel is showing, and never evict something the
 // selector has already asked for.
 //
-// Worth its own home for the reason docs/agents/smb-mirror.md gives eviction generally: the rules
+// Worth its own home for the reason docs/smb-mirror.md gives eviction generally: the rules
 // "look like tidiness and are not". Two of the three ways to get this wrong are silent and one is
 // worse than silent:
 //

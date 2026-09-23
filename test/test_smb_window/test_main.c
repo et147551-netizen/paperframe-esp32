@@ -194,7 +194,7 @@ static void test_on_demand_opens_for_a_stale_catalogue_with_no_wants(void)
 static void test_on_demand_opens_when_the_catalogue_has_never_been_listed(void)
 {
     // The sentinel short-circuit. Were the `||` the other way round this would compute
-    // now_us - INT64_MIN, which overflows -- so this case is about the order of an operator, not
+    // now_us - INT64_MIN, which overflows -- so this case is about the order of an owner, not
     // about a schedule.
     smb_window_state_t s = base();
     s.on_demand = true;

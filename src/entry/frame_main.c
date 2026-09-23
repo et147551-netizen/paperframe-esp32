@@ -54,7 +54,7 @@ static photo_list_t s_list;
 
 // ---------------------------------------------------------------------- buttons
 //
-// FR-6.1 and FR-6.2, against the physical layout the operator read off the unit:
+// FR-6.1 and FR-6.2, against the physical layout the owner read off the unit:
 // TOP (GPIO1) toggles the orientation and holds for the access point, UP (GPIO10) goes
 // back one picture and DOWN (GPIO9) goes forward one.
 //
@@ -352,11 +352,11 @@ static void service_buttons(void)
     }
     while (s_want_rotate > 0) {
         s_want_rotate--;
-        // **A CYCLE, 0->1->2->3->0, since ticket 69** (the operator's answer of 2026-09-20). FR-6.2
+        // **A CYCLE, 0->1->2->3->0, since ticket 69** (the owner's answer of 2026-09-20). FR-6.2
         // says this click "toggles the orientation between 0 and 1" and that is a deliberate
         // departure, recorded in docs/requirements/digital-frame.md beside ticket 42's.
         //
-        // The cost was put to the operator and accepted: returning to a known orientation is four
+        // The cost was put to the owner and accepted: returning to a known orientation is four
         // clicks rather than one, on a frame whose user is an elderly parent. The 5 s hold that
         // raises the access point is a different gesture and is untouched.
         //
@@ -508,8 +508,8 @@ void app_main(void)
 #ifdef FRAME_WIFI_SSID
     // Station credentials normally arrive from the Web UI (`/api/wifi/config`) and live in
     // NVS, which survives an app upload. But erasing flash takes them with it, and the
-    // only way to type them back in is a phone on the frame's own AP -- this PC cannot
-    // join one, the location permission it needs is denied by group policy. So a build
+    // only way to type them back in is a phone on the frame's own AP -- the bench PC cannot
+    // join one from a command line. So a build
     // may carry a seed, used only when NVS has nothing, out of git-ignored
     // platformio_local.ini. It is a fallback, never an override: whatever the Web UI
     // wrote wins.
@@ -566,7 +566,7 @@ void app_main(void)
     // FRAME_AP_OPEN is the way back, and it is one flag for two things on purpose: it leaves the
     // access point OPEN and, because app_server.c asks board_wifi_ap_secured() rather than asking
     // the preprocessor, it also stops the captive portal handing out the API token. The pair
-    // cannot come apart, which is the objection docs/agents/web-api.md raises against fixing the
+    // cannot come apart, which is the objection docs/web-api.md raises against fixing the
     // portal at all.
 #ifdef FRAME_AP_OPEN
     printf("# ap: FRAME_AP_OPEN is set -- the access point stays OPEN and the captive portal will\n"
@@ -710,7 +710,7 @@ void app_main(void)
             }
         }
 
-        // Ticket 55, and the operator picked these two rows of its §4 on 2026-09-10: a frame
+        // Ticket 55, and the owner picked these two rows of its §4 on 2026-09-10: a frame
         // with no web UI, and a frame whose /data did not mount. Polled from this loop rather
         // than given a task of its own, because internal RAM is the scarce resource and two
         // small tasks were once enough to make httpd_start() fail -- which is, with some irony,
@@ -765,10 +765,10 @@ void app_main(void)
                (unsigned)app_server_ms_since_activity(), (int)board_led_get());
         // Tickets 41 and 42. `hold=1` is the whole of what the schedule does, and without it
         // on this line a scheduled hold looks exactly like a slideshow that stopped advancing
-        // for one of the reasons docs/agents/defect-log.md already records. `step` is what the
+        // for one of the reasons docs/defect-log.md already records. `step` is what the
         // last sync moved the clock by, repeated here rather than printed once at sync time,
         // because a fact printed once is a fact this bench cannot read on a run it joined late
-        // (docs/agents/hardware-runs.md).
+        // (docs/hardware-runs.md).
         {
             app_clock_status_t ck;
             app_clock_get_status(&ck);
@@ -795,7 +795,7 @@ void app_main(void)
                (unsigned)ss.current_index, (unsigned)ss.pending_index, (unsigned)ss.count,
                ss.refresh_pending ? 1 : 0, ss.current_name);
         // The mirror's lifeline. A sync stops httpd for the length of a window, so
-        // GET /api/smb/status cannot be the only way to see one -- and with the operator
+        // GET /api/smb/status cannot be the only way to see one -- and with the owner
         // remote this line is how a run that is merely slow is told from one that is
         // stuck. stack_free is BYTES: ESP-IDF's uxTaskGetStackHighWaterMark() returns
         // bytes, unlike TaskStatus_t.usStackHighWaterMark above, which is words.

@@ -3,7 +3,7 @@
 // Worth its own suite because a reordering is invisible to everything else in this build. Each stage
 // is host-tested on its own and none of those suites sees the order, so swapping two lines passes
 // `pio test -e native`, passes all ten device builds, and shows up only as a picture a person has to
-// judge. docs/agents/handover-auto-flow.md:41 records the gap in its own table -- the row for `the
+// judge. docs/handover-auto-flow.md:41 records the gap in its own table -- the row for `the
 // wiring` names app_display.c's auto_adjust_canvas() and leaves the fixture column empty.
 //
 // The order was written out by hand in three places until 2026-09-21 (app_display.c, photo_main.c,

@@ -49,7 +49,7 @@ bool epd_band_bottom_align(const epd_canvas_t *c, bool slack_x, epd_align_t *out
 }
 
 // The band rect implied by an already-aligned fit. Private, because a fit whose alignment was not
-// chosen by epd_band_plan() would put the band somewhere the operator rejected.
+// chosen by epd_band_plan() would put the band somewhere the owner rejected.
 static epd_band_t band_from_fit(const epd_fit_t *fit, int32_t lw, int32_t lh, bool slack_x)
 {
     epd_band_t band = {EPD_BAND_NONE, 0, 0, 0, 0, true};
@@ -92,7 +92,7 @@ void epd_band_plan(const epd_canvas_t *c, int32_t img_w, int32_t img_h, epd_fit_
     const int32_t lw = epd_canvas_logical_width(c);
     const int32_t lh = epd_canvas_logical_height(c);
     const epd_fit_t centred = epd_fit_centre(img_w, img_h, lw, lh);
-    // **Centred is the answer unless a band earns the alignment.** The operator's first requirement
+    // **Centred is the answer unless a band earns the alignment.** The owner's first requirement
     // is that the photograph is never moved aside for the band, so every path that declines a band
     // leaves this fit in place rather than an aligned one with nothing drawn in the space.
     *out_fit = centred;
@@ -162,7 +162,7 @@ int32_t epd_band_large_scale(const epd_band_t *band)
 // ------------------------------------------------------------------- the battery icon
 
 // The icon is about two thirds of the glyph height and centred across the line, rather than the
-// full height of the text beside it -- the operator asked for it at its minimum size (2026-09-22),
+// full height of the text beside it -- the owner asked for it at its minimum size (2026-09-22),
 // the same change the web page's icon got.
 static int32_t icon_thick(int32_t ink)
 {
@@ -298,7 +298,7 @@ static bool push_battery(epd_band_layout_t *out, int32_t along, int pct)
 
 // The photograph's segment, with the CITY cut down until the whole thing fits `avail` pixels.
 //
-// **The excess is discarded with no marker** (operator, 2026-09-20). The previous rule refused an
+// **The excess is discarded with no marker** (owner, 2026-09-20). The previous rule refused an
 // over-long segment outright, which on a 400 px band lost the city AND the capture date to a name of
 // fourteen characters -- `RIO DE JANEIRO 19-08-14` is 548 px at scale 4 against 392 available, so the
 // band fell through to the room and the photograph said nothing at all. A cut name is wrong; no name
@@ -308,7 +308,7 @@ static bool push_battery(epd_band_layout_t *out, int32_t along, int pct)
 // fixed, and half of `19-08-14` is unreadable where half a place name is merely a shorter word. So
 // `RIO DE JANEIRO 19-08-14` becomes `RIO DE 19-08-14` at 400 px and stays whole at 800 px.
 //
-// No ellipsis: the operator asked for the excess discarded unconditionally, and a marker would cost
+// No ellipsis: the owner asked for the excess discarded unconditionally, and a marker would cost
 // a character of the name on the band where every character is already contested. The consequence is
 // accepted rather than hidden -- a truncated name is indistinguishable from a short one, so `SAN FR`
 // reads as a place, and the console's `# band seg0` line is where the full string can be checked.
@@ -361,7 +361,7 @@ void epd_band_layout(const epd_band_t *band, const epd_band_content_t *content,
     }
 
     // One scale for the whole line, following the band's thickness and capped at 4 -- a thin band
-    // gets smaller text rather than nothing (operator, 2026-09-19). A band THICKER than one line
+    // gets smaller text rather than nothing (owner, 2026-09-19). A band THICKER than one line
     // keeps its white: the type does not grow to fill it, which is the other half of the same
     // decision and the reason there is still a cap.
     out->scale = epd_band_large_scale(band);
@@ -457,10 +457,10 @@ static void draw_battery(epd_canvas_t *c, bool rot, int32_t bx, int32_t by, int3
     band_fill(c, rot, bx, by, ink, along0 + body - stroke, off, stroke, h);
     band_fill(c, rot, bx, by, ink, along0 + body, off + (h - nub_thick) / 2, nub, nub_thick);
 
-    // The fill IS the reading -- there is no number and no '%' glyph (operator, 2026-09-19). One
+    // The fill IS the reading -- there is no number and no '%' glyph (owner, 2026-09-19). One
     // stroke of clear air inside the outline so a full battery does not read as a solid slab.
     //
-    // Red at a third or less, as on the web page (operator, 2026-09-22). The band is drawn before
+    // Red at a third or less, as on the web page (owner, 2026-09-22). The band is drawn before
     // the quantise, and pure red comes back as the red ink on every palette through both nearest
     // passes -- `dither_diffuse`'s pack (the default) and the Nearest row path. With
     // `dither_diffuse` off the ordered pair search can speckle it (`spectra6` pairs it with

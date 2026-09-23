@@ -1,6 +1,6 @@
 // epdoptimize's per-pixel adjustment stages, in single precision, for the device.
 //
-// **This is not the port. `src/epd_epdopt.c` is the port** -- byte-for-byte verified against
+// **This is not the port. `src/core/epd_epdopt.c` is the port** -- byte-for-byte verified against
 // the library and host-only. This file is the same stages written to run on this SoC, and it
 // exists because of one measurement: the ported tone mapping plus range compression cost
 // **12 826 ms** on one 400 x 600 photograph (2026-09-05,
@@ -14,11 +14,11 @@
 // cost of tone plus range together is **668.9 ms**, against 8 259 ms for the ported pair in the
 // same build. The figures are left as they were taken because each one belongs to an arm that
 // isolated one variable, and re-scaling them by a clock ratio afterwards would turn four
-// measurements into four estimates. `docs/agents/measurements.md` carries both sets.
+// measurements into four estimates. `docs/measurements.md` carries both sets.
 //
 // The hypothesis this file exists to test was: **the cost was the type, not the algorithm.**
 // It was, by a factor of 12.4, which is why epdoptimize's auto flow runs inline on every render
-// and needs no pre-rendered cache. src/epd_auto.c is the other half -- what the settings should
+// and needs no pre-rendered cache. src/core/epd_auto.c is the other half -- what the settings should
 // be for a given picture.
 //
 // **Therefore this is deliberately NOT a parity port and must never be given one's acceptance
@@ -41,7 +41,7 @@
 // so every `/` below is a libgcc call, and the pixel loops make two or three per pixel. Several
 // of them are removable -- a divisor that is an integer 0-255 can be indexed out of a 256-entry
 // reciprocal table exactly, and a divisor that is a loop constant can be hoisted -- and **none of
-// it is done**, because the operator's standing position is that speed is not being asked for at
+// it is done**, because the owner's standing position is that speed is not being asked for at
 // this stage. Each removal costs something: a hoist moves where the rounding happens and so gives
 // up byte-identity with the library, and a table costs 1 KB of a task stack that has already
 // caused a reboot loop in this project once. `epd_adjust.c` names the two that were tried and
@@ -94,7 +94,7 @@ extern const epd_adjust_t EPD_ADJUST_BALANCED;
 
 // ------------------------------------------------- the three stages the auto flow adds
 //
-// Parameters only; src/epd_auto.c decides them. They live here rather than there so that this
+// Parameters only; src/core/epd_auto.c decides them. They live here rather than there so that this
 // file stays the one that owns "what a pixel stage takes" and epd_auto.h stays the one that
 // owns "which values a picture wants" -- and because the other way round is a circular include.
 

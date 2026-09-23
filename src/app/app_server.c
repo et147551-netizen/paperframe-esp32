@@ -1515,7 +1515,7 @@ static esp_err_t h_photos_upload(httpd_req_t *req)
     // FIRST LINE OF THE HANDLER, and the position was measured rather than chosen (ticket 59,
     // 2026-09-15). The stamp was tried below, just before board_storage_lock(), and a window still
     // opened 28.3 s into an upload -- because board_storage_usage() a few lines down ALREADY waits
-    // for that lock (`usage=7,660 ms` in docs/agents/measurements.md, and a render is up to 32 s),
+    // for that lock (`usage=7,660 ms` in docs/measurements.md, and a render is up to 32 s),
     // so the handler was blocked before it could say a client was here. Stamping on arrival is the
     // only point that cannot be behind a lock.
     //
@@ -1621,7 +1621,7 @@ static esp_err_t h_photos_upload(httpd_req_t *req)
     // then failed every render for ever, with the only outside symptom being a slideshow that
     // appears to skip an entry.
     //
-    // **Option A of ticket 72 §4, chosen by the operator on 2026-09-21**: refuse, delete, and name
+    // **Option A of ticket 72 §4, chosen by the owner on 2026-09-21**: refuse, delete, and name
     // the cause, because that is what makes a refusal actionable -- the user can re-export as
     // baseline. B (store it and mark the album entry undisplayable) was the alternative and costs
     // three places instead of one.
@@ -2025,7 +2025,7 @@ static esp_err_t h_battery(httpd_req_t *req)
 // refs/M5PaperColor-UserDemo/main/apps/app_server/app_server.cpp:1047,1078 -- was copied here
 // verbatim, so selecting "landscape" rendered portrait and vice versa. Measured on hardware
 // 2026-09-06 from the auto flow's `region=` line, which is derived from the live canvas:
-// docs/agents/measurements.md.
+// docs/measurements.md.
 //
 // THAT CORRECTION WAS STILL A CONSTANT, and a constant is a portrait-native panel's answer.
 // `rotation == 1 ? "landscape" : "portrait"` is right on the EL040EF1 (400x600) and inverted on
@@ -2041,7 +2041,7 @@ static esp_err_t h_battery(httpd_req_t *req)
 // turns need four names and `orientation` has two, so `rotation: 0..3` was added as the real field
 // and `orientation` stays as a two-valued DERIVED one for compatibility -- which is what the two
 // failures above argue for: the setting is a count of quarter turns, and the panel-relative word is
-// output. The operator chose that shape on 2026-09-20. The word cannot say which of the two
+// output. The owner chose that shape on 2026-09-20. The word cannot say which of the two
 // landscape directions a frame is in, so a client that only speaks `orientation` keeps working and
 // loses nothing it used to have.
 static bool panel_is_native_landscape(void)
@@ -2129,11 +2129,11 @@ static void add_mode_config(cJSON *r, const app_settings_t *s)
     // preview used 200 where every device render uses EPD_DITHER_STRENGTH_QUALITY (140).
     cJSON_AddNumberToObject(r, "dither_strength", EPD_DITHER_STRENGTH_QUALITY);
 
-    // epdoptimize's per-image auto flow (src/epd_auto.h). Another addition to FR-8's nine, and
+    // epdoptimize's per-image auto flow (src/core/epd_auto.h). Another addition to FR-8's nine, and
     // like the palette it redraws when it changes.
     cJSON_AddBoolToObject(r, "auto_adjust", s->auto_adjust);
 
-    // epdoptimize's error diffusion as the quantiser (src/epd_diffuse.h). A third addition, and
+    // epdoptimize's error diffusion as the quantiser (src/core/epd_diffuse.h). A third addition, and
     // deliberately its own field rather than folded into auto_adjust -- app_settings.h says why.
     cJSON_AddBoolToObject(r, "dither_diffuse", s->dither_diffuse);
 
@@ -2730,7 +2730,7 @@ static esp_err_t h_thumb_serve(httpd_req_t *req)
 // minutes. The page formats them. That is what the rest of this API does (`/api/storage` sends
 // bytes, `/api/battery` millivolts), and it keeps a threshold out of the firmware: a derived
 // boolean is a second thing that can be wrong, and finding out costs a rebuild and a flash
-// (docs/agents/method.md).
+// (docs/method.md).
 //
 // TWO THINGS IT DELIBERATELY DOES NOT REPORT:
 //
@@ -2947,14 +2947,14 @@ static esp_err_t h_system_reset(httpd_req_t *req)
 // Ticket 68. `{"action": "start"}`, `{"action": "stop"}`, `{"action": "white"}` or
 // `{"action": "clear"}`.
 //
-// **`clear` is the escalation of `white`**, added 2026-09-20 when the operator asked whether the
+// **`clear` is the escalation of `white`**, added 2026-09-20 when the owner asked whether the
 // existing mechanisms could deal with mild ghosting: seven refreshes, white/black alternating, three
 // black passes bracketed by white, ending white. One white is *measured* to remove a plainly legible
 // 1-bit ghost completely (ticket 30), so this is for the case beyond that — and **that case has never
-// been produced on this bench, because the operator declined to manufacture a ghost to test it.** It
+// been produced on this bench, because the owner declined to manufacture a ghost to test it.** It
 // is a mechanism, not a measured remedy.
 //
-// **`white` parks the panel on white NOW**, added 2026-09-20 at the operator's request. It is the
+// **`white` parks the panel on white NOW**, added 2026-09-20 at the owner's request. It is the
 // same one-shot the window edge takes and it exists because there was no other way to ask for it:
 // GooDisplay's own precaution is to ship and store the panel showing a fully white image
 // (`docs/research/reference-source-review.md`), and before this the only routes to one were to run
@@ -2991,7 +2991,7 @@ static esp_err_t h_panel_maint(httpd_req_t *req)
     const bool white = strcmp(action->valuestring, "white") == 0;
     const bool clear = strcmp(action->valuestring, "clear") == 0;
     // Read before the body is freed, and defaulted to one rather than refused when absent: the
-    // operator asked for a repeat count as an option, not as a required field, and one cycle is what
+    // owner asked for a repeat count as an option, not as a required field, and one cycle is what
     // `clear` meant before it existed. Validated by app_maint_start_clear(), which is the only place
     // that knows the bound.
     const cJSON *cyc = cJSON_GetObjectItem(j, "cycles");
@@ -3345,7 +3345,7 @@ static esp_err_t h_gphotos_status(httpd_req_t *req)
     cJSON_AddNumberToObject(r, "fetched", st.fetched);
     cJSON_AddNumberToObject(r, "failed", st.failed);
     cJSON_AddNumberToObject(r, "deleted", st.deleted);
-    // On demand (the operator's ruling of 2026-09-13): the slideshow asks for one photograph at a
+    // On demand (the owner's ruling of 2026-09-13): the slideshow asks for one photograph at a
     // time. fetched/failed/deleted/evicted are since boot.
     cJSON_AddNumberToObject(r, "want_pending", st.want_pending);
     cJSON_AddNumberToObject(r, "evicted", st.evicted);
@@ -3783,7 +3783,7 @@ static esp_err_t send_index(httpd_req_t *req)
 // cookie exactly as the pairing QR does, and every relative call after that is a Host we own. So
 // nothing has to be relaxed in the guard.
 //
-// **Three conditions, and each of them is load-bearing** -- docs/agents/web-api.md's warning is
+// **Three conditions, and each of them is load-bearing** -- docs/web-api.md's warning is
 // that redirecting the probe with the token "hands the API token to anything joining an open AP":
 //
 //   1. `!host_ok(req)` -- only a request addressed to somebody else. A normal GET / is untouched.

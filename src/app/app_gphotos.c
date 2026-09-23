@@ -23,7 +23,7 @@
 #endif
 
 // Seconds between fetches. Short on purpose: a trough only matters if it COINCIDES with a
-// refresh, an upload or a sync window, and docs/agents/hardware-runs.md's lesson is that a
+// refresh, an upload or a sync window, and docs/hardware-runs.md's lesson is that a
 // sub-second event is caught by DENSITY rather than by timing. At 20 s a 15.6 s refresh is almost
 // always in flight for part of a fetch, and over an hour every pairing gets many chances.
 #ifndef FRAME_GPHOTOS_EVERY_S

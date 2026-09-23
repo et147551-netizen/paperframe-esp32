@@ -191,7 +191,7 @@ esp_err_t epd_image_draw_fit(epd_image_reader_t *r, epd_canvas_t *c, const epd_f
 
 // **`epd_image_edge_luma()` was here and was removed on 2026-09-19.** It measured the decoded
 // image's left and right edge brightness so the matte band could sit beside the brighter one. The
-// operator then looked at five samples on the glass and fixed the band to the bottom of the glass
+// owner then looked at five samples on the glass and fixed the band to the bottom of the glass
 // instead, which leaves no side to choose and left this without a caller.
 //
 // Recorded rather than silently dropped because it was verified first, and the verification is the

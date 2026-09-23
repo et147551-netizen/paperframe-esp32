@@ -10,7 +10,7 @@
 // to be up to four lines stacked across the band's short axis; `epd_band_layout_t`'s comment
 // has the defect that change removed.
 //
-// Ticket 64. **The rule changed on 2026-09-19 after the operator looked at five samples on the
+// Ticket 64. **The rule changed on 2026-09-19 after the owner looked at five samples on the
 // glass**, and the change is the whole of what makes this module's geometry non-obvious:
 //
 //   **The band sits along the BOTTOM OF THE GLASS, or there is none and the photograph is centred.**
@@ -21,7 +21,7 @@
 //
 // **Logical is not physical, and conflating them is the trap here.** Everything below is in LOGICAL
 // canvas coordinates, because that is how the rest of the render pipeline works (see
-// `docs/agents/render-pipeline.md` on the diffusion's walk). On a canvas that `auto_rotate` has
+// `docs/render-pipeline.md` on the diffusion's walk). On a canvas that `auto_rotate` has
 // turned, the band that lies along the bottom of the glass is a logically VERTICAL strip, and its
 // text is drawn turned 90° precisely so that the canvas's own rotation brings it back upright for a
 // viewer. So `EPD_BAND_VERTICAL` does not mean "vertical on the glass" -- it means the band runs
@@ -51,7 +51,7 @@
 // The readable ceiling and floor, in `epd_text` scale units. A 4.0" 400x600 panel is about 180 ppi,
 // so scale 4 puts 28 px of ink at roughly 3.9 mm of cap height and scale 2 puts 14 px at 2.0 mm.
 //
-// **The large scale is a CEILING, not a constant** (operator, 2026-09-19: size the text to the
+// **The large scale is a CEILING, not a constant** (owner, 2026-09-19: size the text to the
 // leftover). A band too thin for scale 4 gets scale 3 or 2 rather than nothing, which is what lets
 // the reTerminal E1002's 30 px band carry a line at all. Scale 1 is not a candidate: 7 px is about
 // 1 mm here and nobody can read it, so a band too thin for scale 2 draws nothing.
@@ -116,7 +116,7 @@ bool epd_band_bottom_align(const epd_canvas_t *c, bool slack_x, epd_align_t *out
 //
 // `*out_fit`'s WIDTH and HEIGHT are always `epd_fit_centre()`'s for the same arguments -- only x and
 // y move, and with no band they are `epd_fit_centre()`'s too. The photograph is never made smaller
-// to make room, which is the operator's first requirement and the one thing here that must not
+// to make room, which is the owner's first requirement and the one thing here that must not
 // change: `choose_jpeg_scale()` and `epd_fit_reduction()` are defined against the fit's size and
 // ticket 56 is what changing it costs.
 void epd_band_plan(const epd_canvas_t *c, int32_t img_w, int32_t img_h, epd_fit_t *out_fit,
@@ -154,7 +154,7 @@ typedef struct {
     // before that existed, for uploads, and wherever the source carried no EXIF.
     //
     // **`city` and `country` are separate because the country is the FIRST thing dropped**
-    // (operator, 2026-09-19). It is the least informative piece and the only one whose removal can
+    // (owner, 2026-09-19). It is the least informative piece and the only one whose removal can
     // rescue a whole later segment: `TOKYO JAPAN` is 11 characters and `TOKYO` is 5, and on the
     // M5Paper Color's 400 px band those six characters are the difference between the room's line
     // appearing and not. So the layout composes WITHOUT the country and splices it back in at the
@@ -176,7 +176,7 @@ typedef struct {
 
     // Charge, 0-100, or **negative for unknown**, which is not the same as 0: a board that cannot
     // read its cell must draw no icon rather than an empty one. Drawn as an icon and nothing else
-    // (operator, 2026-09-19) -- there is no '%' glyph in the 5x7 set and the fill IS the reading.
+    // (owner, 2026-09-19) -- there is no '%' glyph in the 5x7 set and the fill IS the reading.
     int battery_pct;
 } epd_band_content_t;
 
@@ -186,7 +186,7 @@ typedef enum {
 } epd_band_seg_kind_t;
 
 // **ONE line, filled ALONG the band, since 2026-09-19.** It used to be up to four lines stacked
-// across the band's short axis; the operator replaced that with a single line whose content sits
+// across the band's short axis; the owner replaced that with a single line whose content sits
 // side by side, and a band thicker than one line keeps its white rather than growing the type.
 //
 // That change is not cosmetic -- it removes a defect by construction. The stacked version chose a
@@ -216,7 +216,7 @@ typedef struct {
 //  1. A fault, alone, the whole line. The band stops being about the photograph while the frame
 //     needs attention.
 //  2. The photograph: `city` and `taken`, **without the country**. **A city too long for the band is
-//     CUT and the excess discarded, with no marker** (operator, 2026-09-20) -- and the CITY is what
+//     CUT and the excess discarded, with no marker** (owner, 2026-09-20) -- and the CITY is what
 //     is cut, never the date. Refusing it instead lost the city and the capture date together on a
 //     400 px band, which is what a fourteen-character name did before.
 //  3. The room: `now` and `climate`, degrading to `now` alone when the pair will not fit. Nothing

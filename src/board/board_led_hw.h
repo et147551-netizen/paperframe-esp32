@@ -47,7 +47,7 @@ void board_led_hw_paint(uint8_t r, uint8_t g, uint8_t b);
 // **The one capability board_led.c has to branch on, and it exists for exactly one pattern.**
 // BOARD_LED_FAULT is BOARD_LED_IDLE's duty in red, so on a board that answers false here the two
 // are the same light and ticket 55's persistent fault cannot be seen — which
-// board_led_e1002.c documented as a deliberate gap until the operator made the blink state the
+// board_led_e1002.c documented as a deliberate gap until the owner made the blink state the
 // designated way to tell a resting frame from a broken one (2026-09-20, ticket 68 §11). Then a
 // fault that looks like resting stops being a documented gap and becomes a wrong answer.
 //

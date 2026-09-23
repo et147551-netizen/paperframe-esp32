@@ -140,16 +140,16 @@ static epd_render_t current_render(void)
 // (epd_dither.h, app_settings.h). The default is epdoptimize's aitjcize calibration.
 //
 // **The palette is worth changing; the algorithm is not, and that was measured.** The full
-// epdoptimize pipeline is ported and verified in src/epd_epdopt.c, and on this board it costs
+// epdoptimize pipeline is ported and verified in src/core/epd_epdopt.c, and on this board it costs
 // 24.0 s per photograph against this path's 1.62 s -- longer than a refresh, and it starves
 // CPU 0 for the duration, so the watchdog fires and httpd stops answering. It stays for
-// tools/render_preview.py and the parity test. docs/agents/measurements.md has both sets of
+// tools/render_preview.py and the parity test. docs/measurements.md has both sets of
 // numbers and the account of a wrong turn taken on the way here.
 //
 // Those two figures are from 160 MHz with a 32-byte data cache line. Since 2026-09-05 this path
 // renders in **1084.0 ms** on this env; the ratio the argument rests on is unchanged. What *did*
 // change is that the pipeline's first two stages now have a device-side single-precision
-// implementation in src/epd_adjust.c, and auto_adjust_canvas() below runs them and three more
+// implementation in src/core/epd_adjust.c, and auto_adjust_canvas() below runs them and three more
 // before this. So "the algorithm is not worth changing" is still true of the *port* and no longer
 // true of the arithmetic it does. With the auto flow on, a photograph costs decode 264 + auto
 // 1 917 + this path 984 = 3 165 ms against a 15 015 ms refresh (measured 2026-09-05), which is
@@ -187,7 +187,7 @@ static void dither_canvas(bool nearest, const epd_render_t *cfg)
 //
 // **It costs less than the path it replaces**, which is not what anyone expected: 602.7 ms for the
 // diffusion plus 217.6 ms for the pack, against the row path's 1076.3 ms at the same tone setting
-// (ten runs each, docs/agents/measurements.md). The pack is cheap for a structural reason -- after
+// (ten runs each, docs/measurements.md). The pack is cheap for a structural reason -- after
 // diffusion every pixel already *is* a palette entry, so nearest searches six candidates instead of
 // thirty-six, and it is exact rather than approximate.
 //
@@ -253,7 +253,7 @@ static bool diffuse_and_pack(const epd_fit_t *fit, const epd_render_t *cfg, uint
 //
 // Classify the photograph, choose its settings from the class, and apply the five per-pixel
 // stages before the quantiser. This is what <https://paperlesspaper.github.io/epdoptimize> does
-// by default; src/epd_classify.h is the first half and src/epd_auto.h the second.
+// by default; src/core/epd_classify.h is the first half and src/core/epd_auto.h the second.
 //
 // **Off unless the user turns it on** (app_settings.h): it overrides FR-3.3's filename rule for
 // choosing between nearest and dithered.
@@ -493,7 +493,7 @@ static void read_meta(const char *path)
     // future reader seeing `TOKYO JAPAN` in a log and concluding the geocoder worked.
     if (s_band.city[0] == '\0' && s_band.year == 0) {
         // The city is overridable because the band's CUT cannot be seen with a five-letter name
-        // (operator, 2026-09-20): `TOKYO 19-08-14` fits every band this project has, so the arm that
+        // (owner, 2026-09-20): `TOKYO 19-08-14` fits every band this project has, so the arm that
         // verifies truncation needs a long one and nothing on this bench produces one. Still inside
         // the bench block, still one flag away from not existing.
 #ifndef FRAME_BAND_DUMMY_CITY
@@ -532,7 +532,7 @@ static void band_content(void)
     float temp_c = 0.0f;
     float humidity = 0.0f;
     if (board_sht40_read(&temp_c, &humidity) == ESP_OK) {
-        // `25`-degree-`C 51%` (operator, 2026-09-19). It used to read `25.0C RH51` because
+        // `25`-degree-`C 51%` (owner, 2026-09-19). It used to read `25.0C RH51` because
         // NEITHER glyph existed in the 5x7 set and a byte with no glyph draws a hollow box; both
         // were added the same day. EPD_TEXT_DEGREE rather than a literal degree sign, because a
         // `\u00b0` typed into a UTF-8 source file is TWO bytes and the first of them has no glyph.
@@ -546,7 +546,7 @@ static void band_content(void)
         c->climate = s_band.climate;
     }
 
-    // **An icon, not a voltage** (operator, 2026-09-19): the band shows charge the way a phone does.
+    // **An icon, not a voltage** (owner, 2026-09-19): the band shows charge the way a phone does.
     // `vbat_mv == 0` is a board that cannot read its cell, which is not the same as an empty one, so
     // it stays negative and no icon is drawn. The curve is the web UI's own
     // (`battery_percent_from_mv()`, ported and parity-checked) so the page and the glass cannot
@@ -646,14 +646,14 @@ static esp_err_t render_image(const char *path, float *total_ms)
         }
 
         // **The fit and the band together, and the rule is the bottom of the GLASS** (ticket 64,
-        // operator 2026-09-19 after looking at five samples). The photograph is never made smaller
+        // owner 2026-09-19 after looking at five samples). The photograph is never made smaller
         // for the band's sake -- `epd_band_plan()` returns `epd_fit_centre()`'s own width and height
         // in every case -- and where the leftover cannot lie along the bottom of the glass there is
         // no band and the fit stays centred. That is the "photograph only" case.
         //
         // Computed in one call on purpose: doing the fit and the band separately is what put the
         // band down the panel's right edge for a 9:16 source and across its top for a turned 4:3
-        // one, which is what the operator rejected.
+        // one, which is what the owner rejected.
         epd_band_plan(&s_canvas, src_w, src_h, &fit, &band);
 
         err = epd_image_draw_fit(reader, &s_canvas, &fit);
@@ -757,7 +757,7 @@ static esp_err_t render_image(const char *path, float *total_ms)
 
 // One full-screen flat in a native panel colour -- the maintenance course, ticket 68.
 //
-// **It does not touch s_canvas at all**, and that is the whole point: the operator asked for a mode
+// **It does not touch s_canvas at all**, and that is the whole point: the owner asked for a mode
 // that ignores the palette ("パレット等を無視して"), so the colour index goes straight into the
 // packed frame and no stage that could reinterpret it ever runs. No epd_canvas, no epd_dither, no
 // epd_adjust, no epd_epdopt, no auto flow -- a white flat here is EPD_COLOR_WHITE, not whatever the
@@ -869,7 +869,7 @@ static esp_err_t draw_qr(const char *text, int32_t x, int32_t y, int32_t w, int3
 // ---------------------------------------------------------------- the words beside them
 //
 // Ticket 66. The two codes used to be indistinguishable to a user -- `epd_canvas` had no font, so
-// the screen had no text at all, and on 2026-09-09 the operator did not know which code joined the
+// the screen had no text at all, and on 2026-09-09 the owner did not know which code joined the
 // network and which opened the page and tried them in turn. That was answered with a COUNT of
 // filled squares beside each, one and two, which said the order and nothing else.
 //

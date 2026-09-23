@@ -2,7 +2,7 @@
 // (src/dither/processing.ts and src/dither/dither.ts). Copyright the epdoptimize authors,
 // licensed Apache-2.0; see LICENSES/epdoptimize-Apache-2.0.txt.
 //
-// Tone mapping and range compression are kept structurally line-for-line with src/epd_epdopt.c
+// Tone mapping and range compression are kept structurally line-for-line with src/core/epd_epdopt.c
 // so the two can be read side by side: the point of those two is that only the types changed,
 // and a reader has to be able to check that claim. Where they deviate -- the clamp, and AUTO
 // mode's histogram bins -- the comment says so at the point of deviation.
@@ -65,7 +65,7 @@
 // the point where inline application would be refused, and an unnecessary table is a thing that
 // can be wrong.
 //
-// One more thing this does *not* generalise to: `src/epd_dither.c`, the row-wise quantiser that
+// One more thing this does *not* generalise to: `src/core/epd_dither.c`, the row-wise quantiser that
 // actually ships, contains no fmax/fmin at all -- it is integer throughout -- so the finding buys
 // it nothing and there is no project-wide sweep waiting here. `epd_epdopt.c` and `epd_colour.c`
 // do use them and must keep them: those are the byte-for-byte port, where a NaN-semantics change
@@ -512,7 +512,7 @@ void epd_adjust_paper_region(uint8_t *rgb, size_t width, size_t height, size_t s
     }
 
     // Upstream fills each of these from `options.x ?? default` (:466-471). The port takes them
-    // from the struct instead, because src/epd_auto.c is the only producer and sets all eight
+    // from the struct instead, because src/core/epd_auto.c is the only producer and sets all eight
     // explicitly -- there is no path here that can present a missing field.
     const float strength = clamp_f(cfg->strength, 0.0f, 1.0f);
     if (strength == 0.0f) {
@@ -607,7 +607,7 @@ void epd_adjust_level_region(uint8_t *rgb, size_t width, size_t height, size_t s
     // **Written the way upstream writes it, division by division.** Two of those divisions are
     // removable: `span / 255` is a loop constant, and `255 / maxChannel` has an integer divisor
     // so a 256-entry reciprocal table would return the identical float. Both were in an earlier
-    // version of this function and both came out again, because the operator's standing position
+    // version of this function and both came out again, because the owner's standing position
     // is that speed is not being asked for at this stage -- and each of them cost something
     // real. The hoist moves where the rounding happens, so this stage would no longer be
     // byte-identical to the library for a value on a boundary; the table put 1 KB on the display

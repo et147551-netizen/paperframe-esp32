@@ -15,14 +15,14 @@
 // IT IS NOT IN THE SHIPPING BUILD. Everything here compiles to nothing without
 // -DFRAME_GPHOTOS_PROBE, which is a bench flag and carries the URL with it.
 //
-// NO PERMANENT TASK. docs/agents/board-and-storage.md records that adding two small tasks was
+// NO PERMANENT TASK. docs/board-and-storage.md records that adding two small tasks was
 // once enough to make httpd_start() return ESP_ERR_HTTPD_TASK -- a frame that boots with a panel,
-// a slideshow and no web UI, on one easily-missed log line. So a fetch runs on a TRANSIENT task created for it and
-// deleted at the end, and boot is not perturbed at all. **If that creation ever fails, that is a
+// a slideshow and no web UI, on one easily-missed log line. So a fetch runs on a TRANSIENT task
+// created for it and deleted at the end, and boot is not perturbed at all. **If that creation ever fails, that is a
 // finding and not an error to retry**: it means 8 KB of internal RAM was not available at the
 // moment a real implementation would have needed it, and the module says so.
 //
-// PRIVACY (operator's instruction, 2026-09-12): a share key is a bearer capability to a whole
+// PRIVACY (owner's instruction, 2026-09-12): a share key is a bearer capability to a whole
 // album and a photo URL fetches a photograph to anyone holding it. Neither is ever printed.
 
 #include <stdbool.h>

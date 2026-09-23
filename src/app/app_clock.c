@@ -16,7 +16,7 @@
 
 static const char *TAG = "clock";
 
-// Scoped by the operator: a well-known public server, no custom or self-hosted one.
+// Scoped by the owner: a well-known public server, no custom or self-hosted one.
 #define NTP_SERVER "time.google.com"
 
 // The first attempt waits for the station to associate rather than racing it. board_wifi_init()
@@ -24,7 +24,7 @@ static const char *TAG = "clock";
 // few seconds more.
 #define FIRST_ATTEMPT_MS 30000
 
-// One sync a day, which is the whole of the operator's request. The RX8130's own rate is
+// One sync a day, which is the whole of the owner's request. The RX8130's own rate is
 // -0.004 % measured over 4774 s (docs/phase0-measurement-harness.md), so a day of drift is
 // about three seconds -- there is nothing here that needs better.
 #define RESYNC_MS (24 * 60 * 60 * 1000)

@@ -199,7 +199,7 @@ embedded PSRAM (octal, matching `CONFIG_SPIRAM_MODE_OCT`), 32 MB flash.**
   premise and says so.
 - **No battery-backed RTC RAM.** The PCF8563 has no general-purpose RAM, so `board_state_*()` is
   NVS-backed here. Ticket `43` seam 4.
-- **The hardware revision matters and cannot be chosen at purchase** (operator, 2026-09-15). V1.2
+- **The hardware revision matters and cannot be chosen at purchase** (owner, 2026-09-15). V1.2
   and later carry the I²C SY6974B; earlier units carry a non-I²C ETA6003 and cannot report external
   power or charge state. `board_i2c_init()` **probes** `0x6B` on I²C1 and prints which it found, so
   the boot log answers it — check each unit on arrival rather than assuming. A pre-V1.2 unit costs
@@ -283,4 +283,4 @@ coincidence.
 default `0x40` = **2.50 V**), the forced-power-off threshold, against this project's own curve calling
 **3.2 V** empty. `0xA6` = 3.30 V. It is PM1 RAM, so it resets when the cell is removed and wants
 writing every boot, and per the datasheet 5VIN insertion recovers a board set too high — **read, not
-measured**, so raise it only with the operator present. Ticket `71` §7.5.
+measured**, so raise it only with the owner present. Ticket `71` §7.5.

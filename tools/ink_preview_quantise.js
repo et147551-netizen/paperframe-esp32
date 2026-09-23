@@ -1,6 +1,6 @@
 // Runs assets/index.html's ink-preview quantiser outside the browser, writing one palette
 // index per pixel so that tools/ink_preview_parity.py can compare it against the device's own
-// row path in src/epd_dither.c.
+// row path in src/core/epd_dither.c.
 //
 //   node tools/ink_preview_quantise.js <config.json> <paletteId> <quality|none|diffuse> \
 //        <raw.rgb> <width> <height> <out.idx>

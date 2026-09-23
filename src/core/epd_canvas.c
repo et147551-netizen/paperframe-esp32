@@ -8,7 +8,7 @@
 // four lines symbolically, and the header says why a second copy elsewhere is forbidden.
 //
 // Rotation is a COUNT OF QUARTER TURNS from the panel's native orientation, 0..3 since
-// ticket 69 (the operator's request of 2026-09-20; it was 0 or 1 before). Rotation 1 is the
+// ticket 69 (the owner's request of 2026-09-20; it was 0 or 1 before). Rotation 1 is the
 // original, chosen to match what the shipping firmware shows: the recovered factory
 // photograph is landscape on a portrait panel with the image upright. The other two are
 // derived from it rather than invented, so that "one more quarter turn" means the same thing

@@ -52,7 +52,7 @@ int img_exif_orientation(const uint8_t *src, size_t src_len);
 //
 // **Read this while the ORIGINAL bytes are still in hand.** The mirror's import re-encodes through
 // esp_new_jpeg and the re-encode carries no EXIF at all, so a photograph sitting on the card
-// usually has none -- `docs/agents/smb-mirror.md` has the account. `app_smb_sync.c` calls this
+// usually has none -- `docs/smb-mirror.md` has the account. `app_smb_sync.c` calls this
 // beside `img_exif_orientation()`, on the same buffer, for that reason. A draw-time read would
 // return nothing for most of a library and look like a feature that is merely rare.
 //

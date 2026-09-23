@@ -43,10 +43,10 @@ the stock firmware: a device left in Ezdata mode by it normalises the value to
 `""` on load and rewrites the key, rather than failing to parse its own NVS.
 
 **Added, and not from the shipping firmware.** **FR-10, Google Photos as a second
-photograph source** — the operator's requirement of 2026-09-12, for a user who cannot
+photograph source** — the owner's requirement of 2026-09-12, for a user who cannot
 operate a PC. Every other requirement here is cited to `refs/M5PaperColor-UserDemo/`;
 that one is not, and it says so at its head. It does not remove or degrade the SMB
-source, and part of what the operator asks for — the whole Google Photos library —
+source, and part of what the owner asks for — the whole Google Photos library —
 **is not achievable by any route** and is recorded there as such.
 
 **Deferred.** Refresh-time optimisation. The panel's `PLL` register (`0x30`, the
@@ -82,7 +82,7 @@ worth having.
 > **Deliberate deviation, 2026-09-05: the API is authenticated, and FR-2.1's open
 > access point is on its way out.** Ticket `10` said an open AP with an unauthenticated
 > upload endpoint was "the shipping firmware's security posture, inherited knowingly"
-> and that it would be worth a note here if it ever became a concern. The operator
+> and that it would be worth a note here if it ever became a concern. The owner
 > raised it, so here is the note.
 >
 > What changed, and why it is a deviation rather than a bug fix: the shipping firmware
@@ -106,7 +106,7 @@ worth having.
 > see ticket `29` for why the larger designs were rejected.
 
 > **Deliberate deviation, 2026-09-19: FR-2.1's access point is not raised at boot, and FR-2.5's
-> auto-off is on and inverted.** The operator's reasoning: the AP is for first setup and for pushing
+> auto-off is on and inverted.** The owner's reasoning: the AP is for first setup and for pushing
 > photographs onto a frame with no home Wi-Fi, both of which happen with somebody standing at the
 > frame. Ticket `67`.
 >
@@ -120,7 +120,7 @@ worth having.
 >   block is deleted rather than kept beside this: it changed the radio's mode without going through
 >   the one owner of that state.
 > - **Why, beyond power:** ticket `66` put the WPA2 passphrase at 8 characters, 40 bits, on the
->   operator's instruction. A handshake can only be captured while there is a beacon, so a radio that
+>   owner's instruction. A handshake can only be captured while there is a beacon, so a radio that
 >   is up when asked rather than permanently is the other half of that trade. **It also returns ~5.8 KB
 >   of internal RAM**, measured on both boards, which is this project's scarce resource. The power
 >   saving is expected and **not measured** — this bench has no current meter.
@@ -129,7 +129,7 @@ worth having.
 >   rather than a radio that was already on. `-DFRAME_AP_ALWAYS_ON` restores FR-2.1's permanent AP.
 
 > **Deliberate deviation, 2026-09-19: FR-6.3's screen carries words and a typed code, because a
-> computer cannot read a QR.** The operator's report of 2026-09-18: a PC could not connect at all.
+> computer cannot read a QR.** The owner's report of 2026-09-18: a PC could not connect at all.
 > Ticket `66`.
 >
 > - **FR-6.3's gesture is unchanged** — a 5 s hold on TOP — and so is what the shipping firmware does
@@ -143,7 +143,7 @@ worth having.
 >   only computer is a PC has no way to guess that an unlabelled side button held for five seconds is
 >   what produces a password, and the panel is the only surface this device has before anyone is paired.
 >   Cleared on the existing rule — whatever renders next, or three minutes.
-> - **FR-2.1's WPA2 password is 8 characters**, the operator's instruction of 2026-09-19 — it is typed
+> - **FR-2.1's WPA2 password is 8 characters**, the owner's instruction of 2026-09-19 — it is typed
 >   by hand and 8 is WPA2's own floor. Crockford base32 rather than hex, so those eight characters
 >   carry 40 bits instead of 32 and contain no glyph pair a reader confuses. **40 bits is not large**;
 >   it rests on the same trust boundary as everything else here, physical access to the frame. A
@@ -152,7 +152,7 @@ worth having.
 >   FR-2.3, FR-2.4, and FR-6.1/6.2/6.4.
 
 > **Deliberate deviation, 2026-09-17: the product name is generic, so FR-2.1's SSID prefix and
-> FR-8's `device_name` default are not the shipping firmware's.** The operator's instruction: this
+> FR-8's `device_name` default are not the shipping firmware's.** The owner's instruction: this
 > project is no longer the M5Paper Color's, and a name that is one board's model number is wrong on
 > the other. The new name is **PaperFrame**.
 >
@@ -178,7 +178,7 @@ worth having.
 > what was true then rather than errors.
 
 > **Deliberate deviation, 2026-09-18: the UI has no mode selection, and FR-9's mode landing page is
-> gone from the page while its API stays.** The operator's instruction, and
+> gone from the page while its API stays.** The owner's instruction, and
 > The tabbed-page plan is the account. The shipping firmware opens on a MODE page and
 > offers two modes; ticket `22` deleted the second one, so since then that page has been a one-item
 > menu standing between every page load and the photographs.
@@ -226,7 +226,7 @@ Route table: `UD/apps/app_server/app_server.cpp:1361-1383`. State and config
 payload shapes: `UD/apps/app_server/app_server.h:17-44`.
 
 **Two deliberate departures from that table, both 2026-09-07 and both in
-`docs/agents/measurements.md`.**
+`docs/measurements.md`.**
 
 `GET /thumb/*` is an **addition**: it serves a re-encoded 192×336 JPEG of a stored image. The
 shipping firmware has no such route because its grid draws thumbnails from `/data/*`, which
@@ -259,7 +259,7 @@ on-screen "what this will look like on ink" rendering, which even remaps white t
 **This paragraph describes upstream's page, and this project's has diverged**: both those
 names and the white remap are gone from `assets/index.html`, whose preview matches against
 the selected palette and, since 2026-09-22, draws in that palette's own colours as
-epdoptimize's demo does — see `docs/agents/render-pipeline.md`. Upstream's numbers are what FR-5 was written against, which
+epdoptimize's demo does — see `docs/render-pipeline.md`. Upstream's numbers are what FR-5 was written against, which
 is why they stay here.
 
 **But it bakes FR-5.3's matte in, and this project deliberately does not.** Upstream's
@@ -271,7 +271,7 @@ itself — the device would have drawn the same matte — but it is not harmless
 takes the region it classifies and measures from the *file's* dimensions
 (`src/app/app_display.c:337-338`), so a pre-matted upload gives it the whole canvas. Measured on
 the host, that turns a photograph into `flatIllustration` and switches range compression and
-white preservation off; `docs/agents/measurements.md` has the table and the fixture trap.
+white preservation off; `docs/measurements.md` has the table and the fixture trap.
 `assets/index.html`'s `exportUploadCanvas()` therefore uploads the drawn rectangle when the
 composition is a single untouched layer, and the full canvas otherwise — the preview still
 shows the matte, because the panel will have one.
@@ -314,8 +314,8 @@ is an addition rather than a reinterpretation: a tenth NVS key (`palette`), a `p
 and a `palettes` list on `GET/POST /api/mode/mode_1/config`, and a `<select>` in
 `assets/index.html` built from that list. It exists because no palette suits every picture —
 the calibrated sets keep shadow detail and can push dark browns towards green, the
-uncalibrated one inverts that trade. `docs/agents/measurements.md` has the numbers behind it.
-**The default is `boeber` ("Calibrated - brighter primaries") since 2026-09-06 by operator
+uncalibrated one inverts that trade. `docs/measurements.md` has the numbers behind it.
+**The default is `boeber` ("Calibrated - brighter primaries") since 2026-09-06 by owner
 instruction**, which is not `EPD_RENDER_DEFAULT`'s `aitjcize` — the constant is the renderer's
 fallback and the non-frame envs' choice, the setting is what `env:frame` starts from.
 
@@ -326,7 +326,7 @@ compression and *dithering mode* from the class — epdoptimize's own auto flow,
 `imageN` upload no longer necessarily renders nearest, because the classifier decides. It is an
 eleventh NVS key, and it **defaulted to off until 2026-09-06** on the grounds that overriding a
 requirement cited to the shipping firmware has to be the user's choice rather than this build's.
-**The operator instructed on 2026-09-06 that it default to ON**, so that reasoning no longer holds
+**The owner instructed on 2026-09-06 that it default to ON**, so that reasoning no longer holds
 and this build ships the reinterpretation: FR-3.3's "Nearest for an `imageN` upload" is met only
 when the user turns `auto_adjust` back off. Recorded here as a known, chosen departure.
 
@@ -336,11 +336,11 @@ for: 1 917 ms a photograph, taking the non-refresh work from 8 % to 21 % of a 15
 application 2026-09-06, the two photographs `env:frame` actually rendered cost 726 and 1 184 ms,
 because their suggestion carried a neutral saturation and the tone stage took its cheap
 three-LUT path. Both figures are real; which one a photograph pays depends on its `lumaStdDev`.
-Whether it looks better was settled by eye rather than by instrument: the operator looked at the
+Whether it looks better was settled by eye rather than by instrument: the owner looked at the
 result on the panel on 2026-09-06 and chose it as the default.
 
 **And a third addition, `dither_diffuse`, added 2026-09-06 — a twelfth NVS key, off at first and
-**default ON from 2026-09-06** by the same operator instruction.** Turned on, the *dithered* half of FR-3.3 is Floyd-Steinberg error diffusion
+**default ON from 2026-09-06** by the same owner instruction.** Turned on, the *dithered* half of FR-3.3 is Floyd-Steinberg error diffusion
 (`src/core/epd_diffuse.c`, epdoptimize's quantiser) instead of M5GFX's row-wise pair search. Unlike
 `auto_adjust` it does **not** reinterpret FR-3.3: nearest stays nearest, from the filename rule or
 from the auto plan, because upstream's `quantizationOnly` and FR-3.3's "Nearest" are the same
@@ -349,9 +349,9 @@ request. So FR-3.3's two modes remain two modes; only how the dithered one dithe
 It is also the one addition whose default is not about cost, because it **costs less** than the path
 it replaces: 602.7 ms of diffusion plus a 217.6 ms exact nearest pack against the row path's
 1076.3 ms, and 737 ms on the shipping application with `auto_adjust` on. Its default rests on the
-operator's own look at the glass on 2026-09-06, and it stays a setting **separate from
+owner's own look at the glass on 2026-09-06, and it stays a setting **separate from
 `auto_adjust`** so a later comparison can still move one variable at a time.
-`docs/agents/measurements.md` has the figures.
+`docs/measurements.md` has the figures.
 
 One thing about how it composes with the palette setting, because getting it wrong is invisible
 until the picture is on the glass: `epd_render_t.tone` *is* display-mode range compression, and so
@@ -398,7 +398,7 @@ refresh.
 | FR-5.8 | Re-scan the directory before every navigation, and clamp the index if the list shrank underneath it. | same, `:400-423` |
 
 > **FR-5.2 AND FR-6.2 ARE DEPARTED FROM DELIBERATELY: the orientation setting has FOUR values, not
-> two.** Ticket `69`, the operator's request of 2026-09-20 — "画面の回転方向を2方向から4方向へ" — asked
+> two.** Ticket `69`, the owner's request of 2026-09-20 — "画面の回転方向を2方向から4方向へ" — asked
 > for all four quarter turns, and the reason they gave when asked is the landscape hand: they want
 > either way round, not an upside-down frame. Built the same day.
 >
@@ -408,7 +408,7 @@ refresh.
 > - `rotation` is a count of quarter turns from the panel's native orientation, 0..3
 >   (`EPD_CANVAS_ROTATION_MAX`). **The stored meaning of 0 and 1 is unchanged**, so a device configured
 >   by an older build needs no migration and gets none.
-> - **FR-6.2's click cycles 0→1→2→3→0** instead of toggling. Put to the operator with the cost stated —
+> - **FR-6.2's click cycles 0→1→2→3→0** instead of toggling. Put to the owner with the cost stated —
 >   returning to a known orientation is four clicks rather than one, on a frame whose user is an elderly
 >   parent — and accepted.
 > - The API gains `rotation: 0..3` as the authoritative field. FR-8's `orientation` string stays, still
@@ -428,7 +428,7 @@ refresh.
 | FR-6.4 | Every button press plays a short confirmation tone. | `local_photo_slideshow.cpp:388-390` |
 
 > **Settled on the unit, 2026-09-03: the case has no A/B/C markings at all.** The
-> operator read the layout off the device and it is by position:
+> owner read the layout off the device and it is by position:
 >
 > | Position | GPIO | Action |
 > | --- | --- | --- |
@@ -460,7 +460,7 @@ proper and is blocked on two things that are not close: a PM1 `SYS_CMD` power-of
 UserDemo-only and unverified here.
 
 **`low_power_mode` NO LONGER MEANS THIS TABLE, and that is a deliberate departure** — taken
-2026-09-10 under ticket `42`, with the operator's approval of the plan that proposed it. It is now
+2026-09-10 under ticket `42`, with the owner's approval of the plan that proposed it. It is now
 the master switch for an ACTIVE-HOURS SCHEDULE: outside a configured local-hour window the frame
 stops advancing the slideshow and stops opening periodic mirror windows, and nothing powers off.
 `httpd`, mDNS and the access point stay up throughout, so the failure mode of getting the window
@@ -472,7 +472,7 @@ nowhere** — NVS, the settings struct and accessors, the API and a live control
 `app_settings_low_power_mode()` having zero callers outside `app_settings.c` (established
 2026-09-08, ticket `42`) — so a user could flip it, watch it persist across a reboot, and have it
 change nothing; that is the same shape as the "four guards that were not guarding" in
-`docs/agents/defect-log.md`. And the alternative left that switch in the interface still doing
+`docs/defect-log.md`. And the alternative left that switch in the interface still doing
 nothing. **The Web UI's description of this control was rewritten at the same time**: it used to
 describe FR-7's power-off and wake, which was never this firmware's behaviour.
 
@@ -520,13 +520,13 @@ default 540) with `active_start` and `active_end` (uint8 local hours, default 7 
 ## FR-10 Google Photos as a second photograph source
 
 **This is the first requirement in this document that does not come from the shipping firmware.**
-Every FR above is cited to `refs/M5PaperColor-UserDemo/`. This one comes from the operator,
+Every FR above is cited to `refs/M5PaperColor-UserDemo/`. This one comes from the owner,
 2026-09-12, and the citation is the conversation plus the measurements in
 `.scratch/digital-frame/gphotos_prereg.md`. It is recorded here rather than in a ticket because it
 changes what the product is for, and because ticket `57` — which recommended doing none of it in
 this repository — was written without it.
 
-**The requirement, in the operator's terms.** A person who cannot operate a PC
+**The requirement, in the owner's terms.** A person who cannot operate a PC
 must be able to see **their own** Google Photos photographs on the frame. Adding photographs has to
 work from a phone and nothing else. This is stated as mandatory, not as an idea.
 
@@ -566,7 +566,7 @@ paths (`/a/`, `/ogw/`) are on those hosts too and are not photographs.
 
 ### FR-10.2 The whole library is NOT achievable and must not be promised
 
-The operator's ideal is the person's entire library. **No path to that exists.** Google removed
+The owner's ideal is the person's entire library. **No path to that exists.** Google removed
 `photoslibrary.readonly` on 2025-04-01 (ticket `57` §1, checked against developers.google.com), so
 no third-party application can read a user's library; and a shared link exposes only what is in that
 album. This is a property of Google's product, not of this frame, and no amount of work here
@@ -653,14 +653,14 @@ from the LAN to Google's CDN.
    not the answer — a 4 KB input buffer breaks the read, because nothing negotiates a smaller record
    size with Google, and `DYNAMIC_BUFFER` makes `dma_largest` worse. **Adopted into `sdkconfig.frame`
    the same day, and built:** the album's LIST is mirrored and its photographs are fetched one at a
-   time before they are shown, like the SMB share's — the operator's ruling of that evening —
+   time before they are shown, like the SMB share's — the owner's ruling of that evening —
    verified on hardware, with `GET /api/gphotos/status` as FR-10.4's surface. The knob also moves the
    Wi-Fi supplicant's crypto allocations; an iPad joined the WPA2 AP and changed the album under it. **FR-10.3
    is met by construction**: the slideshow selects from one catalogue that holds both sources
    (`src/app/app_catalog.c`); both on demand at once has not been run on hardware. **A newly entered
    link that cannot be read, or holds no photograph, is not kept**: the last link that worked is put
-   back and the page says why (the operator's rule, 2026-09-13). **Up to four albums are shown together,
-read once a day or on the page's Sync now** (the operator's change of the same day). Ticket `60`
+   back and the page says why (the owner's rule, 2026-09-13). **Up to four albums are shown together,
+read once a day or on the page's Sync now** (the owner's change of the same day). Ticket `60`
 §3c-§3f.
 
 Ticket `60` owns both and the build behind them.

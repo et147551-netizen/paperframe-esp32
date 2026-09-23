@@ -20,7 +20,7 @@
 // because red at half against green at half is the same light — stated rather than worked around,
 // on the grounds that a pattern invented to stand in for a colour would change the 2.5 % duty
 // board_led.h chose deliberately, and inventing one silently is worse than a documented gap.
-// **The operator then made the LED's blink state the designated way to tell a resting frame from a
+// **The owner then made the LED's blink state the designated way to tell a resting frame from a
 // broken one** (ticket 68 §11), at which point a fault that looks like resting stopped being a
 // documented gap and became a wrong answer. So `board_led_hw_has_colour()` returns false here and
 // board_led.c gives FAULT a **double pulse at the same total on-time** — the duty argument is

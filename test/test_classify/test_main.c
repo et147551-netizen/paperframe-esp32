@@ -1,4 +1,4 @@
-// Is src/epd_classify.c the same classifier as epdoptimize's image-style.ts?
+// Is src/core/epd_classify.c the same classifier as epdoptimize's image-style.ts?
 //
 // Run: ~/.platformio/penv/Scripts/pio.exe test -e native
 // Regenerate the fixtures: node tools/epdopt_reference.mjs --classify

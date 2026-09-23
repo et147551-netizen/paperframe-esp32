@@ -2,11 +2,11 @@
 """Sign, check and try out the Google Photos scrape rules the frame reads.
 
 Designed in the scrape-rules plan. The frame only uses a rule file whose signature verifies
-against the public key compiled into it (src/gphotos_rules_pubkey.h), so a rule change needs this
+against the public key compiled into it (src/app/gphotos_rules_pubkey.h), so a rule change needs this
 script and the private key, and nothing else -- no rebuild, and nobody at the frame.
 
   keygen                 make the key pair: the private key OUTSIDE the repository, the public key
-                         into src/gphotos_rules_pubkey.h. Refuses to overwrite either.
+                         into src/app/gphotos_rules_pubkey.h. Refuses to overwrite either.
   sign RULES.json        write RULES.signed: line one the base64 DER signature over the SHA-256 of
                          every byte after that line, then RULES.json byte for byte.
   verify SIGNED          check a signed file against the header's public key and the frame's limits.
@@ -32,7 +32,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 
 REPO = Path(__file__).resolve().parent.parent
-HEADER = REPO / "src" / "gphotos_rules_pubkey.h"
+HEADER = REPO / "src" / "app" / "gphotos_rules_pubkey.h"
 PRIVATE = Path.home() / ".m5paper-keys" / "gphotos_rules_private.pem"
 
 # The firmware's limits, gphotos_rules.h. Keep them equal.
@@ -174,7 +174,7 @@ def rules_from_path(path):
 
 
 # ---------------------------------------------------------------------------- matcher
-# A transcription of src/gphotos_parse.c's per-pattern state machine, so a rule can be tried against a
+# A transcription of src/core/gphotos_parse.c's per-pattern state machine, so a rule can be tried against a
 # saved page before it is signed. The C is the authority; test/test_gphotos_rules pins it.
 
 def scan_text(pats, text):

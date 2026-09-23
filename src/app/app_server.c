@@ -1961,6 +1961,24 @@ static esp_err_t h_system_ota(httpd_req_t *req)
     return ESP_OK;
 }
 
+// Ticket 61's pull, on demand: the page's "Check for updates". Answers at once; the outcome is
+// `ota.last_code` on GET /api/system/info, and an image that installs restarts the frame.
+static esp_err_t h_system_ota_check(httpd_req_t *req)
+{
+    GUARD(req);
+
+    const char *why = "";
+    if (app_ota_pull_start(&why) != ESP_OK) {
+        return send_error(req, 503, why);
+    }
+    cJSON *r = cJSON_CreateObject();
+    cJSON_AddStringToObject(r, "status", "checking");
+    httpd_resp_set_status(req, "202 Accepted");
+    send_json(req, r);
+    cJSON_Delete(r);
+    return ESP_OK;
+}
+
 static esp_err_t h_battery(httpd_req_t *req)
 {
     GUARD(req);
@@ -2804,6 +2822,11 @@ static esp_err_t h_system_info(httpd_req_t *req)
     cJSON_AddBoolToObject(o, "writing", ota.writing);
     cJSON_AddNumberToObject(o, "written", (double)ota.written);
     cJSON_AddStringToObject(o, "last_result", ota.last_result);
+    cJSON_AddBoolToObject(o, "url_set", ota.url_set);
+    cJSON_AddBoolToObject(o, "checking", ota.checking);
+    cJSON_AddNumberToObject(o, "last_check_s", (double)ota.last_check_s);
+    cJSON_AddNumberToObject(o, "last_http", ota.last_http);
+    cJSON_AddStringToObject(o, "last_code", ota.last_code);
 
     cJSON *net = cJSON_AddObjectToObject(r, "network");
     cJSON *sta = cJSON_AddObjectToObject(net, "sta");
@@ -3895,8 +3918,8 @@ esp_err_t app_server_start(void)
     // nothing else. COUNT THE TABLE rather than trusting this sentence; that is what the paragraph
     // above is about, and it is why ticket 68's status shares an existing route instead of adding a
     // second one. 33 on 2026-09-22 for ticket 09's /api/storage/usb, 34 the same day for ticket
-    // 61's /api/system/ota.
-    cfg.max_uri_handlers = 34;
+    // 61's /api/system/ota, 35 on 2026-09-23 for its /api/system/ota/check.
+    cfg.max_uri_handlers = 35;
     cfg.max_req_hdr_len = 1024;  // a browser's request headers, not 2 KB of them
     // 10 KB, not the reference's 20. The 20 KB was inherited from a firmware that
     // renders inside its handlers; here the deepest path is the multipart parser, which
@@ -3957,6 +3980,8 @@ esp_err_t app_server_start(void)
         {"/api/storage/usb", HTTP_POST, h_storage_usb, NULL},
         // Ticket 61. 34 entries with the wildcard, against max_uri_handlers = 34.
         {"/api/system/ota", HTTP_POST, h_system_ota, NULL},
+        // Ticket 61's pull. 35 entries with the wildcard, against max_uri_handlers = 35.
+        {"/api/system/ota/check", HTTP_POST, h_system_ota_check, NULL},
         {"/*", HTTP_GET, h_static_serve, NULL},
     };
 

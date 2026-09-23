@@ -13,6 +13,7 @@
 #include "app_clock.h"
 #include "app_display.h"
 #include "app_maint.h" // app_maint_course_running() -- the only thing taken from it, see below
+#include "app_ota.h"
 #include "app_settings.h"
 #include "app_smb_sync.h"
 #include "board.h"
@@ -714,8 +715,10 @@ void app_slideshow_update(void)
     // advance. A button press, an API call and a manual app_slideshow_next() all still work during a
     // course, because a frame that goes unresponsive for five minutes is worse than a spoiled
     // course.
+    // Ticket 61 adds a third: no automatic advance while a firmware image is being written, which
+    // restarts the frame when it ends and would only have the refresh held up behind it.
     if (!s_needs_refresh && app_settings_auto_slideshow() && !app_display_busy() &&
-        app_clock_schedule_active() && !app_maint_course_running()) {
+        app_clock_schedule_active() && !app_maint_course_running() && !app_ota_writing()) {
         const uint32_t interval_ms = (uint32_t)app_settings_interval_minutes() * 60u * 1000u;
         if (interval_ms > 0 && (now - s_last_refresh_ms) >= interval_ms) {
             unlock();

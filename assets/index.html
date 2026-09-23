@@ -1681,6 +1681,17 @@ whatever the footer says.
             <div class="info-row"><span class="info-label" data-i18n="si.name">Name</span><span class="info-value" id="si-name">--</span></div>
             <div class="info-row"><span class="info-label" data-i18n="si.fw">Firmware</span><span class="info-value" id="si-fw">--</span></div>
             <div class="info-row"><span class="info-label" data-i18n="si.uptime">Running for</span><span class="info-value" id="si-uptime">--</span></div>
+            <!-- Ticket 61's pull. Hidden when the build has no update address (`ota.url_set`). -->
+            <div id="si-ota-box" class="hidden">
+              <div class="info-row"><span class="info-label" data-i18n="si.ota">Updates</span><span class="info-value" id="si-ota">--</span></div>
+              <div style="margin-top:10px;">
+                <button id="si-ota-btn" class="btn btn-outline btn-block" onclick="checkOtaNow()" style="justify-content:center;" data-i18n="ota.btn">Check for updates</button>
+                <div style="font-size:13px;color:#7a7370;margin-top:6px;line-height:1.5;" data-i18n="ota.help">
+                  The frame checks for new firmware once a week by itself and installs it, restarting
+                  when it does. This button checks now. Settings and photographs are kept.
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Raw, and with no colour or threshold on it. Internal RAM is the scarce resource on
@@ -1871,6 +1882,22 @@ const EN = {
   "toast.thumbcache": "Thumbnails will be fetched again",
   "toast.maint.clear": "Deep cleaning the screen",
   "toast.usb": "Restarting as a USB drive. Reload this page after ejecting it.",
+  "toast.ota.checking": "Checking for updates…",
+
+  // Ticket 61: GET /api/system/info's `ota.last_code`, which is a fixed word for exactly this.
+  "ota.st.checking": "Checking…",
+  "ota.st.never": "Not checked yet",
+  "ota.st.none": "Not checked yet",
+  "ota.st.up_to_date": "Up to date",
+  "ota.st.installing": "Installing — the frame restarts",
+  "ota.st.no_release": "No update published",
+  "ota.st.http_error": "The update server answered an error",
+  "ota.st.net_error": "The update server could not be reached",
+  "ota.st.other_board": "The published update is for another device",
+  "ota.st.rolled_back": "The latest update did not start and was undone",
+  "ota.st.refused": "Busy — try again shortly",
+  "ota.st.failed": "The update could not be installed",
+  "ota.ago": "{result} · {ago} ago",
 
   "maint.what.check": "Colour check",
   "maint.what.clear": "Deep clean",
@@ -2097,6 +2124,20 @@ const I18N = {
   "toast.thumbcache": "サムネイルを再取得します",
   "toast.maint.clear": "画面を強力にクリーニングしています",
   "toast.usb": "USBドライブとして再起動しています。取り出した後にこのページを再読み込みしてください。",
+  "toast.ota.checking": "更新を確認しています…",
+  "ota.st.checking": "確認中…",
+  "ota.st.never": "まだ確認していません",
+  "ota.st.none": "まだ確認していません",
+  "ota.st.up_to_date": "最新です",
+  "ota.st.installing": "インストール中 — フレームが再起動します",
+  "ota.st.no_release": "公開された更新はありません",
+  "ota.st.http_error": "更新サーバーがエラーを返しました",
+  "ota.st.net_error": "更新サーバーに接続できませんでした",
+  "ota.st.other_board": "公開された更新は別の機種用です",
+  "ota.st.rolled_back": "最新の更新は起動できなかったため元に戻しました",
+  "ota.st.refused": "処理中です。しばらくしてからもう一度お試しください",
+  "ota.st.failed": "更新をインストールできませんでした",
+  "ota.ago": "{result}・{ago}前",
   "colour.black": "黒",
   "colour.white": "白",
   "colour.yellow": "黄",
@@ -2226,6 +2267,7 @@ const I18N = {
   "si.name": "名前",
   "si.fw": "ファームウェア",
   "si.uptime": "連続稼働時間",
+  "si.ota": "ファームウェア更新",
   "si.diag": "診断情報",
   "si.intfree": "内部 RAM の空き",
   "si.intmin": "内部 RAM の最低値",
@@ -2266,6 +2308,8 @@ const I18N = {
   "thumbcache.help": "アルバムのサムネイルが写真本体と違う画像を表示しているときに使います。このブラウザがすべてのサムネイルを取得し直します。フレーム側は何も変更されません。",
   "usb.btn": "USBドライブとして開く",
   "usb.help": "先にUSBケーブルでフレームをパソコンにつないでください。フレームが再起動し、パソコンにドライブとして表示されます。パソコンでドライブを取り出すか、ケーブルを抜くか、フレームのボタンを押すまで、スライドショーとWi-Fiは止まります。",
+  "ota.btn": "更新を確認",
+  "ota.help": "フレームは週に1回、新しいファームウェアを自動で確認してインストールし、そのときに再起動します。このボタンで今すぐ確認できます。設定と写真はそのまま残ります。",
 
   "storage.nearlyfull": "残りわずか",
   "storage.low": "空きが減っています",
@@ -2461,6 +2505,20 @@ const I18N = {
   "toast.thumbcache": "將重新載入縮圖",
   "toast.maint.clear": "正在深層清理螢幕",
   "toast.usb": "正在以 USB 磁碟重新啟動。退出磁碟後請重新載入這個頁面。",
+  "toast.ota.checking": "正在檢查更新…",
+  "ota.st.checking": "檢查中…",
+  "ota.st.never": "尚未檢查",
+  "ota.st.none": "尚未檢查",
+  "ota.st.up_to_date": "已是最新版本",
+  "ota.st.installing": "正在安裝 — 相框將重新啟動",
+  "ota.st.no_release": "目前沒有發布的更新",
+  "ota.st.http_error": "更新伺服器回傳錯誤",
+  "ota.st.net_error": "無法連線到更新伺服器",
+  "ota.st.other_board": "發布的更新適用於其他機型",
+  "ota.st.rolled_back": "最新的更新無法啟動，已還原",
+  "ota.st.refused": "忙碌中，請稍後再試",
+  "ota.st.failed": "無法安裝更新",
+  "ota.ago": "{result}・{ago}前",
   "colour.black": "黑色",
   "colour.white": "白色",
   "colour.yellow": "黃色",
@@ -2590,6 +2648,7 @@ const I18N = {
   "si.name": "名稱",
   "si.fw": "韌體",
   "si.uptime": "已運行",
+  "si.ota": "韌體更新",
   "si.diag": "診斷資訊",
   "si.intfree": "內部 RAM 可用",
   "si.intmin": "內部 RAM 最低值",
@@ -2630,6 +2689,8 @@ const I18N = {
   "thumbcache.help": "當相簿中的縮圖與照片本身不一致時使用。此瀏覽器會重新載入所有縮圖，相框本身不會有任何變更。",
   "usb.btn": "以 USB 磁碟開啟",
   "usb.help": "請先用 USB 線將相框連接到電腦。相框會重新啟動，並在電腦上顯示為一個磁碟。在電腦上退出磁碟、拔掉連接線或按下相框的按鈕之前，幻燈片與 Wi-Fi 都會停止。",
+  "ota.btn": "檢查更新",
+  "ota.help": "相框每週會自動檢查一次新韌體並安裝，安裝時會重新啟動。按下此按鈕可立即檢查。設定與照片都會保留。",
 
   "storage.nearlyfull": "快滿了",
   "storage.low": "空間偏少",
@@ -4714,6 +4775,21 @@ async function loadSystemInfo() {
     siSet("si-fw", dev.fw_version ? `${dev.fw_version} · ${dev.fw_date} · IDF ${dev.idf_version}` : null);
     siSet("si-uptime", dev.uptime_ms ? siDuration(dev.uptime_ms) : null);
 
+    // Ticket 61. `last_check_s` is uptime at the check, so its age is measured against uptime too.
+    const ota = d.ota || {};
+    document.getElementById("si-ota-box").classList.toggle("hidden", !ota.url_set);
+    let otaText;
+    if (ota.checking) otaText = t("ota.st.checking");
+    else if (!(ota.last_check_s >= 0)) otaText = t("ota.st.never");
+    else {
+      let res = t("ota.st." + ota.last_code);
+      if (res === "ota.st." + ota.last_code) res = ota.last_result;  // a word this page predates
+      if (ota.last_code === "http_error" && ota.last_http) res += ` (HTTP ${ota.last_http})`;
+      const ago = Math.max(0, (dev.uptime_ms || 0) - ota.last_check_s * 1000);
+      otaText = t("ota.ago", { result: res, ago: siDuration(ago) });
+    }
+    siSet("si-ota", otaText);
+
     const dg = d.diag || {};
     siSet("si-int-free", dg.int_free ? formatSize(dg.int_free) : null);
     siSet("si-int-min", dg.int_min ? formatSize(dg.int_min) : null);
@@ -5043,6 +5119,20 @@ async function executeUsbDrive() {
     return;
   }
   showToast(t("toast.usb"), "success");
+}
+
+// Ticket 61. The route answers at once; the outcome lands in GET /api/system/info, read again after
+// a download's worth of time. An update that installs restarts the frame and the reread fails.
+async function checkOtaNow() {
+  try {
+    await apiCall("POST", "/api/system/ota/check");
+  } catch(e) {
+    showToast(e.message, "error");
+    return;
+  }
+  showToast(t("toast.ota.checking"), "success");
+  siSet("si-ota", t("ota.st.checking"));
+  setTimeout(loadSystemInfo, 15000);
 }
 
 // ==================== Storage ====================

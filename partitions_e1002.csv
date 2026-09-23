@@ -1,0 +1,31 @@
+# 32 MB layout for the Seeed reTerminal E1002.
+#
+# NOT derived from partitions.csv, and the difference is deliberate. That table copies
+# M5Stack's shipping firmware exactly so that a device flashed with this firmware can read
+# NVS and photographs written by the stock one -- a property that has been confirmed by
+# mounting it (see partitions.csv). The E1002 has no M5Stack firmware to be compatible
+# with, so the only constraints here are the flash size and this project's own code.
+#
+# What the code requires, and it is only two things:
+#   * a `nvs` partition -- app_settings.c, and board_e1002.c's board_state_*() NVS fallback;
+#   * a data/fat partition LABELLED `storage` -- board_storage.c's FLASH_PARTITION_LABEL,
+#     mounted at /data over wear levelling. It is what FR-4 falls back to when no card is
+#     fitted, and it is what the usage page reports as internal storage.
+#
+# The app region is partitions.csv's, 0x10000..0xA00000, split the same way into `otadata` and
+# two OTA slots (ticket 61, 2026-09-22): one layout for both boards means one fewer difference to
+# reason about. The remaining 22 MB goes to `storage` -- the E1002's 32 MB flash against the
+# M5Paper Color's 16 MB is the one hardware advantage that costs nothing to use.
+#
+# Selected by BOTH `board_build.partitions` in platformio.ini and CONFIG_PARTITION_TABLE_CUSTOM
+# in the generated sdkconfig. Without the first, PlatformIO generates its own partitions.bin
+# from the board manifest and flashes that instead, ignoring the IDF option entirely --
+# verified on this project 2026-08-31, and the reason is in platformio.ini's own comment.
+#
+# Name,   Type, SubType, Offset,   Size,      Flags
+nvs,      data, nvs,     0x9000,   0x6000,
+phy_init, data, phy,     0xf000,   0x1000,
+otadata,  data, ota,     0x10000,  0x2000,
+ota_0,    app,  ota_0,   0x20000,  0x4F0000,
+ota_1,    app,  ota_1,   0x510000, 0x4F0000,
+storage,  data, fat,     0xA00000, 0x1600000,

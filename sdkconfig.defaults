@@ -1,0 +1,131 @@
+# Octal PSRAM, lifted verbatim from the M5 official demo. The IO numbers are
+# board-specific and are not guessable — do not "clean these up".
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_40M=y
+CONFIG_SPIRAM_CLK_IO=30
+CONFIG_SPIRAM_CS_IO=26
+CONFIG_SPIRAM_USE_MALLOC=y
+
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+
+# QIO rather than the IDF default of DIO. Measured 2026-09-05 and it bought **nothing**
+# measurable -- every timed figure was identical to the DIO arm within 0.1 ms -- so it is here
+# because it is what Espressif's speed guide recommends and it demonstrably works on this chip,
+# not because it helped. Do not reach for flash mode as the answer to a speed question here.
+#
+# **The image header will still say DIO and that is not a failure.** PlatformIO rewrites `qio` to
+# `dio` in the header it flashes (platforms/espressif32/builder/main.py:88-100), the ROM uses that
+# to load the bootloader, and the bootloader then applies this setting itself. The check is the
+# app-level line `spi_flash: flash io: qio`, not `od` on firmware.bin.
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+
+# Console over the built-in USB-serial-JTAG, replacing the Arduino recipe's
+# -DARDUINO_USB_CDC_ON_BOOT / -DARDUINO_USB_MODE flags.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# 16 MB flash. The partition table is set here rather than via
+# board_build.partitions — see the note in platformio.ini.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+
+# Custom table, because the digital frame needs a data partition to keep photos
+# in and SINGLE_APP_LARGE has none. Layout matches the shipping firmware; see
+# partitions.csv.
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# FAT on the `storage` partition, over wear levelling. VOLUME_COUNT=2 because
+# the internal volume and a microSD can both be mounted. LFN on the heap with a
+# 255-byte limit so photo filenames survive a round trip through USB MSC.
+CONFIG_WL_SECTOR_SIZE_4096=y
+CONFIG_FATFS_VOLUME_COUNT=2
+CONFIG_FATFS_LFN_HEAP=y
+CONFIG_FATFS_MAX_LFN=255
+CONFIG_FATFS_SECTOR_4096=y
+CONFIG_FATFS_CODEPAGE_437=y
+CONFIG_FATFS_PER_FILE_CACHE=y
+CONFIG_FATFS_ALLOC_PREFER_EXTRAM=y
+
+# app_server registers httpd with max_open_sockets = 13. ESP-IDF's httpd checks
+# that against (LWIP_MAX_SOCKETS - 3), three being reserved internally, so the
+# default of 10 leaves only 7 and httpd_start() returns ESP_ERR_INVALID_ARG:
+#   httpd: Config option max_open_sockets is too large (max allowed 7, ...)
+# Port 80 then never binds and both the captive portal and the LAN web UI are
+# unreachable, with nothing obviously wrong anywhere else.
+CONFIG_LWIP_MAX_SOCKETS=16
+
+# Brownout detection. A full refresh is the largest current draw this board
+# makes; a marginal battery should reset cleanly rather than corrupt the FAT
+# volume it was writing.
+CONFIG_ESP_BROWNOUT_DET=y
+CONFIG_ESP_BROWNOUT_DET_LVL_SEL_7=y
+
+# TinyUSB MSC. Present from ticket 08 rather than 09 because esp_tinyusb's storage
+# abstraction is also the mount layer -- tinyusb_msc_new_storage_{spiflash,sdmmc}
+# owns the FAT mount and the APP/USB mount-point switch.
+#
+# BUFSIZE is not a preference. tinyusb_msc.c:821-825 refuses to create a spiflash
+# storage unless CONFIG_TINYUSB_MSC_BUFSIZE >= CONFIG_WL_SECTOR_SIZE, and our wear
+# levelling sector is 4096 against an S3 default BUFSIZE of 512.
+#
+# Ticket 08 does NOT install the USB device driver: that switches the USB-C port from
+# USB-Serial-JTAG to USB-OTG (one PHY, GPIO19/20) and takes the console and the
+# esptool reset path with it. Verified 2026-09-02 that creating MSC storage does not
+# touch the PHY -- it only allocates the MSC class bookkeeping and calls
+# esp_vfs_fat_register/f_mount. SUSPEND_CALLBACK / RESUME_CALLBACK belong to 09.
+CONFIG_TINYUSB_MSC_ENABLED=y
+CONFIG_TINYUSB_MSC_BUFSIZE=4096
+CONFIG_TINYUSB_MSC_MOUNT_PATH="/data"
+
+# Ticket 21. uxTaskGetSystemState() needs the trace facility, and without per-task stack
+# high-water marks the only way to find where internal RAM went is to guess -- which is
+# how two attempts at it went wrong on 2026-09-03. It costs a few bytes per TCB.
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+
+# The main task runs the whole boot sequence and then the application tick. At the IDF
+# default of 3584 bytes its high-water mark was 680 bytes free, and adding a kilobyte of
+# instrumentation to it overflowed the stack outright (2026-09-03). A kilobyte more is
+# cheap next to what that costs to diagnose.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=4608
+
+# Internal RAM under load (ticket 21), and what did NOT work.
+#
+# With a client associated and a 1 MB upload in flight the internal low-water mark was
+# 899 bytes (2026-09-03). Two config knobs were tried against it and both are recorded
+# here rather than left for someone to try again:
+#
+#   * Halving Wi-Fi's dynamic RX/TX buffers (32 -> 16) raised the mark, and broke
+#     sustained inbound throughput: a 1 MB upload died at 9.3 s, twice, and the client
+#     then lost the association entirely.
+#   * Shrinking lwIP's per-connection windows (5744 -> 2880) left the mark at 711 bytes
+#     -- no improvement at all -- and slowed the same upload from 11.2 s to 16.4 s.
+#
+# So neither is set. What actually helped was trimming task stacks to their measured
+# high-water marks (see the tasks' own comments) plus the main-task size above: that is a
+# persistent ~14 KB, and it is the difference between httpd starting and returning
+# ESP_ERR_HTTPD_TASK. The remaining dip is transient Wi-Fi RX burst allocation.
+
+# 240 MHz, and a 64-byte data cache line. Measured 2026-09-05; the account, the four-shape
+# memory floor and both arms' controls are in docs/agents/measurements.md.
+#
+# **Neither of these was ever chosen.** Both were absent from this file and arrived as ESP-IDF
+# defaults, the same category as the -Og that every timing figure in this repository was taken at.
+#
+#   CPU 160 -> 240 MHz: 1.5x on everything CPU-bound. The row dither went 1480 -> 991 ms, a JPEG
+#   decode 397 -> 284 ms, and the control -- pure compute in an untouched file -- hit exactly
+#   0.667, the clock ratio. `memcpy` over PSRAM did not move at all, which is how we know it is
+#   the one pass that is bandwidth-bound and the rest are not.
+#
+#   Data cache line 32 -> 64 B: helps everything that touches the canvas (9-13 %) and the
+#   bandwidth-bound pass most (27 %). **Line size is not cache size** -- CONFIG_..._DATA_CACHE_SIZE
+#   would cost 32 KB of internal RAM, which this project does not have, and this costs none.
+#
+# What is NOT set, deliberately: CONFIG_SPIRAM_SPEED_80M, because the 40M above came verbatim from
+# M5's own demo alongside the board-specific IO numbers; CONFIG_ESP32S3_DATA_CACHE_64KB, for the
+# internal RAM; and COMPILER_OPTIMIZATION_PERF (-O2), which was measured and made the adjustment
+# stages a net 4 % slower.
+#
+# **Every CPU-bound figure taken before this date is stale.** The Phase 0 refresh numbers and the
+# FRS table are not: `t_drf` moved by 7 ms out of 14 478 across all of these arms.
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y

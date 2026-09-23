@@ -1,0 +1,11 @@
+# M5Capsule: ESP32-S3FN8, 8 MB flash, NO PSRAM. Deliberately does not carry the
+# CONFIG_SPIRAM block from the main project's sdkconfig.defaults -- there is no
+# PSRAM on this part and enabling it would fail at boot.
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+
+# Console over the ESP32-S3's native USB.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# The capture ISR must not be evicted while flash is busy.
+CONFIG_GPIO_CTRL_FUNC_IN_IRAM=y

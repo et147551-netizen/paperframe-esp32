@@ -1,0 +1,32 @@
+# 16 MB layout, matching M5Stack's shipping firmware
+# (refs/M5PaperColor-UserDemo/partitions.csv) so that a device flashed with this
+# firmware can read NVS and photos written by the stock one.
+#
+# `storage` is the 6 MB FAT volume mounted at /data. It is what the usage page
+# calls "approximately 6 MB of storage space" when no microSD is fitted.
+#
+# Selected by BOTH `board_build.partitions = partitions.csv` in platformio.ini and
+# CONFIG_PARTITION_TABLE_CUSTOM in sdkconfig.defaults. This comment used to say the
+# board_build option must NOT be used; that was wrong, and issue 02 has the account.
+# The option resolves against the PROJECT directory, which is only a problem when
+# naming a file that lives elsewhere. Without it PlatformIO generates its own
+# partitions.bin from the board manifest and flashes that instead, ignoring the IDF
+# option entirely -- so the device silently keeps the esp32s3box default and has
+# nowhere to put a photo.
+#
+# Confirmed 2026-09-02 by mounting it: `storage` came up as a FAT volume already
+# holding imaged001.png..imaged004.png, the stock firmware's own photos. The
+# cross-compatibility this layout was chosen for is real, not just intended.
+#
+# Two OTA slots since ticket 61 (2026-09-22), carved out of what was one `factory` at
+# 0x10000..0xA00000 -- so `nvs` and `storage`, the two partitions the compatibility above is
+# about, did not move. No `factory`: USB is the recovery image. PlatformIO flashes a blank
+# `otadata` and puts the app in `ota_0` when this table is uploaded, which is the whole migration.
+#
+# Name,   Type, SubType, Offset,   Size,     Flags
+nvs,      data, nvs,     0x9000,   0x6000,
+phy_init, data, phy,     0xf000,   0x1000,
+otadata,  data, ota,     0x10000,  0x2000,
+ota_0,    app,  ota_0,   0x20000,  0x4F0000,
+ota_1,    app,  ota_1,   0x510000, 0x4F0000,
+storage,  data, fat,     0xA00000, 0x600000,

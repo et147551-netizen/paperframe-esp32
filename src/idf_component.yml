@@ -1,0 +1,125 @@
+## Managed components for the digital frame.
+##
+## PlatformIO does run the IDF component manager for src/ (which it treats as the main
+## component) -- but only on a fresh CMake configure. An incremental `pio run` after
+## editing this file does nothing at all and reports SUCCESS. Delete
+## .pio/build/<env>/ to pick changes up.
+##
+## Decoder choices are ticket .scratch/digital-frame/issues/06.
+
+dependencies:
+  ## JPEG. Wraps TJpgDec, decodes in blocks with a small working buffer.
+  espressif/esp_jpeg: "^1.3.0"
+
+  ## JPEG ENCODER, for the photo grid's thumbnails. esp_jpeg above is decode-only, and
+  ## nothing else here can write a JPEG.
+  ##
+  ## The grid used to serve the ORIGINAL file as its thumbnail -- a median of 162 KB
+  ## (measured over 1,713 files on the bench share, all 768x1344) into a square box with
+  ## object-fit: contain, twelve to a page. Decoding at esp_jpeg's existing 1/2 scale and
+  ## re-encoding at 192x336 is about 11 KB, so this is worth roughly 15x on a first grid
+  ## load. Repeat loads are already free -- send_file() sets Cache-Control.
+  ##
+  ## Ticket 31 closed this component off and that closure STANDS: it was asked whether the
+  ## DECODER removes the whole-file buffer at epd_image.c:394, the answer was no (same
+  ## contiguous buffer model as esp_jpeg) and the buffer is PSRAM, which is not the scarce
+  ## resource. The encoder was never part of that question because no requirement wanted to
+  ## write a JPEG. The decoder is still esp_jpeg; do not swap it.
+  ##
+  ## TWO THINGS THAT ARE UNLIKE EVERY OTHER DEPENDENCY HERE:
+  ##
+  ##  1. LICENCE -- "ESPRESSIF MIT", which is MIT with the grant restricted to "use on all
+  ##     ESPRESSIF SYSTEMS products". This board is an ESP32-S3 so the grant applies, but it
+  ##     is a third licence class alongside the MIT-family bulk and libsmb2's LGPLv2.1.
+  ##     Recorded here for the same reason libsmb2's is: so it is not rediscovered.
+  ##  2. PREBUILT .a ONLY -- esp-adf-libs ships lib/esp32s3/ plus headers, no source. So the
+  ##     -Wl,--wrap trick that src/smb_aes_hw.c uses against libsmb2 is NOT available
+  ##     against this, and neither is reading it to settle a question.
+  ##
+  ## Its encoder is a constant 10 kB of DRAM per the component's README. That was going to
+  ## need a mutex against httpd's 8 sockets, and does not: measured 2026-09-07, a request
+  ## whose handler is busy blocks every other request, and uxTaskGetSystemState shows one
+  ## httpd task -- so handlers never overlap and the 8 x 10 kB never happens.
+  ##
+  ## The input buffer must be 16-byte aligned (jpeg_calloc_align()). Its FAQ records that a
+  ## misaligned one wraps a few columns to the opposite side of the image on the S3, which
+  ## is silent corruption rather than an error.
+  espressif/esp_new_jpeg: "^1.0.2"
+
+  ## PNG. The real libpng rather than something small and hand-rolled: these files
+  ## arrive from a user's phone and browser, so interlacing, 16-bit channels, palettes,
+  ## alpha and truncated data are all things that will actually turn up. A decoder that
+  ## is merely usually right becomes a frame that occasionally shows garbage.
+  espressif/libpng: "^1.6.58"
+
+  ## USB mass storage, pulled in HERE rather than with ticket 09 because its storage
+  ## abstraction is also the mount layer: tinyusb_msc_new_storage_{spiflash,sdmmc}
+  ## owns the FAT mount and the APP/USB mount-point switch. Adopting it now means
+  ## ticket 09 adds the USB device, not a rewrite of how /data is mounted.
+  ##
+  ## Ticket 08 does NOT call tinyusb_driver_install(). That call switches the S3's
+  ## USB-C port from USB-Serial-JTAG to USB-OTG -- both sit on one internal PHY at
+  ## GPIO19/20 -- which kills this project's console and the esptool reset path on
+  ## COM11. The shipping firmware lives with that by putting its console on the
+  ## Grove UART (its sdkconfig.defaults:22-26). That move belongs to ticket 09.
+  espressif/esp_tinyusb: "^2.1.1"
+
+  ## mDNS, so the frame answers as <device_name>.local on the LAN as well as on its own
+  ## AP (FR-2.3). Not part of ESP-IDF proper since 5.x -- it is a managed component.
+  espressif/mdns: "^1.8.0"
+
+  ## WS2812B over RMT for the two status LEDs (FR-9.1). Taken early out of ticket 16
+  ## because without an LED there is no way to tell whether the board is switched on --
+  ## the panel holds its image unpowered and the console is silent either way.
+  espressif/led_strip: "^3.0.0"
+
+  ## The pairing screen's QR codes (FR-6.3, tickets 29 and 30). Generation only -- it
+  ## hands back a module grid through a callback and this project draws the modules with
+  ## epd_canvas_fill_rect(), whose comment has been anticipating exactly this since the
+  ## canvas was written.
+  espressif/qrcode: "^0.1.0"
+
+  ## TCP throughput measurement for env:iperf (ticket 27). This answers the number ticket
+  ## 23 left open: a 155,803-byte SMB read took 1849.4 ms (84 KB/s, ~45 ms per 4 KB round
+  ## trip) and its own note says that is "an order of magnitude below what the link can do"
+  ## and "not explained here" -- yet ticket 25 designed the whole mirror around it. iperf
+  ## measures the transport without touching board_smb.c.
+  ##
+  ## The CORE ENGINE ONLY. espressif/iperf-cmd is the sibling component that exposes the
+  ## same engine as an esp_console command, and it is deliberately not taken: a console
+  ## brings a task and a stack to a board where adding two small tasks was once enough to
+  ## make httpd_start() return ESP_ERR_HTTPD_TASK (issues/21). The engine's own
+  ## idf_component.yml depends on nothing but idf >= 4.3, so taking it alone costs no
+  ## console -- ticket 31 attributes iperf-cmd's dependency to iperf, and that is wrong.
+  ##
+  ## It is NOT free of tasks, though: its Kconfig defaults are a traffic task and a report
+  ## task at CONFIG_IPERF_DEF_{TRAFFIC,REPORT}_TASK_STACK=4096 each, so 8 KB of internal
+  ## RAM while an instance is running. That is affordable in env:iperf, which is
+  ## station-only with no panel, no httpd and no SMB -- and it is exactly the kind of thing
+  ## that would NOT be affordable inside env:frame. This dependency is here because
+  ## src/CMakeLists.txt globs src/*.c and every env therefore resolves the same manifest;
+  ## the code is dead in every env but iperf and --gc-sections drops it entirely. Checked
+  ## 2026-09-05 by symbol, not by flash delta: xtensa-esp32s3-elf-nm finds 0 iperf symbols
+  ## in .pio/build/m5papercolor/firmware.elf and 33 in .pio/build/iperf/firmware.elf.
+  ##
+  ## Its socket buffers default to 16384 both ways
+  ## (CONFIG_IPERF_DEF_TCP_{RX,TX}_BUFFER_LEN), against board_smb.c's 4096-byte chunks. Do
+  ## not expect iperf to reproduce ticket 23's stall: that was a single SMB2 *response*
+  ## exceeding lwIP's receive window, which is a protocol-framing interaction, and iperf
+  ## has no framing to exceed it with. iperf measures the ceiling, not the stall.
+  ##
+  ## Its server performs NO handshake: it accepts one connection and counts the bytes
+  ## recvfrom() returns. So iperf3 cannot be the peer (it needs a control channel), and
+  ## tools/iperf_peer.py is not an approximation of one -- against this implementation a
+  ## plain socket is exactly equivalent.
+  espressif/iperf: "^1.0.3"
+
+  ## Read-only SMB2/3 client for the NAS mirror (tickets 23-25). SMB2 only -- no SMB1,
+  ## which every modern NAS and Windows default already refuses, and which both WSL
+  ## Android implementations converged on dropping.
+  ##
+  ## NOTE THE LICENCE: libsmb2 is LGPLv2.1, unlike the rest of this project. Accepted
+  ## deliberately; the alternative is hand-writing NTLMSSP and SMB2 negotiation, which
+  ## is a larger job than the frame itself. Recorded here so it is not rediscovered as
+  ## a surprise.
+  sahlberg/libsmb2: "^3.0.1"

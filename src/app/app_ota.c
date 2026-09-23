@@ -19,6 +19,7 @@
 #include "app_display.h"
 #include "app_gphotos_sync.h"
 #include "app_heapwatch.h"
+#include "app_settings.h"
 #include "board_storage.h"
 
 static const char *TAG = "ota";
@@ -142,7 +143,7 @@ void app_ota_boot_check(void)
 // A refusal -- a Google Photos run holding the network, say -- is simply retried at the next tick.
 static void pull_schedule(bool sta_connected)
 {
-    if (!FRAME_OTA_URL[0] || !sta_connected || s_pulling) {
+    if (!FRAME_OTA_URL[0] || !sta_connected || s_pulling || !app_settings_ota_auto()) {
         return;
     }
     const int64_t up_s = esp_timer_get_time() / 1000000;
@@ -439,6 +440,7 @@ static void pull_task(void *arg)
                     } else if (app_ota_finish(&why) != ESP_OK) {
                         code = "failed";
                     } else {
+                        why = "verified; restarting into it";
                         code = "installing";
                         install = true;
                     }

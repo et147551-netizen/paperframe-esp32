@@ -85,6 +85,9 @@ static const char *const KEY_GPHOTOS_GOOD[APP_SETTINGS_GPHOTOS_SLOTS] = {
 // Ticket 71. Same argument again: a key the stock firmware never wrote and will ignore.
 #define KEY_CHARGE_LIMIT "chg_limit"
 
+// Ticket 61. Same argument.
+#define KEY_OTA_AUTO "ota_auto"
+
 // The mDNS hostname and the fallback for an empty `device_name`, so it has to satisfy the same
 // [a-z0-9-] rule the setter enforces.
 //
@@ -317,6 +320,9 @@ static void apply_defaults(app_settings_t *s)
     // frame that lives on mains, not refreshes on a panel with a finite count, and the owner
     // asked for the cap rather than for a switch that starts off.
     s->charge_limit_pct = CHARGE_LIMIT_DEFAULT;
+    // Ticket 61. ON: the pull exists for a frame nobody can reach, and one that has to be told to
+    // update by a person on its network has not gained anything.
+    s->ota_auto = true;
     s->current_mode[0] = '\0';
     default_device_name(s->device_name, sizeof(s->device_name));
 }
@@ -471,6 +477,9 @@ static void load_from_nvs(app_settings_t *s)
     if (nvs_get_u8(h, KEY_CHARGE_LIMIT, &u8) == ESP_OK && charge_limit_valid((int)u8)) {
         s->charge_limit_pct = u8;
     }
+    if (nvs_get_u8(h, KEY_OTA_AUTO, &u8) == ESP_OK) {
+        s->ota_auto = (u8 != 0);
+    }
 
     nvs_close(h);
 }
@@ -530,7 +539,9 @@ esp_err_t app_settings_init(void)
 // slots are written by the two indexed cases below and read by the loop in `load_from_nvs()`. This
 // assertion is what keeps that true: adding a key stops the build here rather than shipping a
 // setting that does not survive a power cut.
-_Static_assert(APP_SETTING_COUNT == 40,
+// 41 since 2026-09-23: ticket 61's `ota_auto`, a case and a line like `standby_deep`'s, and no row or
+// apply case because the OTA tick reads it every time.
+_Static_assert(APP_SETTING_COUNT == 41,
                "a new setting needs a case in save_locked() AND a line in load_from_nvs(), plus a "
                "row in src/core/app_setting_effect.c and a case in src/app/app_apply.c; then make "
                "this number match");
@@ -660,6 +671,9 @@ static esp_err_t save_locked(app_setting_key_t key)
         break;
     case APP_SETTING_CHARGE_LIMIT:
         err = nvs_set_u8(h, KEY_CHARGE_LIMIT, s_settings.charge_limit_pct);
+        break;
+    case APP_SETTING_OTA_AUTO:
+        err = nvs_set_u8(h, KEY_OTA_AUTO, s_settings.ota_auto ? 1 : 0);
         break;
     default:
         err = ESP_ERR_INVALID_ARG;
@@ -1164,6 +1178,23 @@ esp_err_t app_settings_set_standby_deep(bool on)
     lock();
     s_settings.standby_deep = on;
     const esp_err_t err = save_locked(APP_SETTING_STANDBY_DEEP);
+    unlock();
+    return err;
+}
+
+bool app_settings_ota_auto(void)
+{
+    lock();
+    const bool on = s_settings.ota_auto;
+    unlock();
+    return on;
+}
+
+esp_err_t app_settings_set_ota_auto(bool on)
+{
+    lock();
+    s_settings.ota_auto = on;
+    const esp_err_t err = save_locked(APP_SETTING_OTA_AUTO);
     unlock();
     return err;
 }

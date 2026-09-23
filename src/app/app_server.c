@@ -2188,6 +2188,8 @@ static void add_mode_config(cJSON *r, const app_settings_t *s)
     // on it, so the page needs the value here and the "can this board do it" answer from
     // /api/battery's `charger` object, which is absent where it cannot.
     cJSON_AddNumberToObject(r, "charge_limit_pct", s->charge_limit_pct);
+    // Ticket 61. The automatic firmware check; the pull's STATUS is on /api/system/info.
+    cJSON_AddBoolToObject(r, "ota_auto", s->ota_auto);
 }
 
 static esp_err_t h_mode_cfg_get(httpd_req_t *req)
@@ -2234,6 +2236,7 @@ static esp_err_t h_mode_cfg_set(httpd_req_t *req)
     cJSON *standby_deep = cJSON_GetObjectItem(j, "standby_deep");
     cJSON *maint_day = cJSON_GetObjectItem(j, "maint_day");
     cJSON *charge_limit = cJSON_GetObjectItem(j, "charge_limit_pct");
+    cJSON *ota_auto = cJSON_GetObjectItem(j, "ota_auto");
 
     const bool has_rotation = cJSON_IsNumber(rotation);
     // **`rotation` wins over `orientation` when a body carries both**, and this is written down
@@ -2371,6 +2374,10 @@ static esp_err_t h_mode_cfg_set(httpd_req_t *req)
     }
     if (cJSON_IsBool(standby_deep) && cJSON_IsTrue(standby_deep) != app_settings_standby_deep()) {
         app_settings_set_standby_deep(cJSON_IsTrue(standby_deep));
+    }
+    // Ticket 61. Read by app_ota_tick() every 10 s, so there is nothing to apply.
+    if (cJSON_IsBool(ota_auto) && cJSON_IsTrue(ota_auto) != app_settings_ota_auto()) {
+        app_settings_set_ota_auto(cJSON_IsTrue(ota_auto));
     }
     // Ticket 71. Applying it is the other half, and app_setting_effect.h is where that is written
     // down now: the row routes this key to the charger, so app_charge_apply() runs from inside the

@@ -201,6 +201,18 @@ its `state` (`pending` = on trial, otherwise `valid`, a USB flash included) and 
 server answers and closes on the unread upload. `last_result` holds the reason.
 `src/app/app_ota.h` has the rules.
 
+**35 since 2026-09-23**: ticket `61`'s pull, `POST /api/system/ota/check`, no body. It answers
+`202 {"status":"checking"}` at once and the outcome lands in the `ota` block: `checking`,
+`last_check_s` (uptime when the last pull ended, `-1` before one), `last_http`, and **`last_code`,
+the word the page translates** — `up_to_date`, `installing`, `no_release`, `http_error`, `net_error`,
+`other_board`, `rolled_back`, `refused`, `failed` or `none`. Treat those like an error `code`: the
+page keys its strings on them, so they may not be reworded. `503` with a `message` is a refusal before
+anything started (on trial, a pull or upload already running, a Google Photos run holding the
+network). `url_set` false hides the page's button. A push is refused with `503` while a pull runs.
+**Whether the frame checks BY ITSELF is the `ota_auto` setting** (NVS, default on), read and written
+on `/api/mode/mode_1/config` like `standby_deep`; off stops only the automatic check, and this route
+still works.
+
 **And the table being full is a design pressure on new features, not only a number to bump.** Ticket
 `68` wanted a start/stop verb *and* a status readout; the status went onto the existing
 `GET /api/system/info` as `panel.maintenance` instead of becoming a 33rd route, which is also where the

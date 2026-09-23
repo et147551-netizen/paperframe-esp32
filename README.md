@@ -20,7 +20,8 @@ It runs on two boards:
   demand and resized on the device.
 - On-device quantisation to the six-colour panel, including a port of
   [epdoptimize](https://github.com/paperlesspaper/epdoptimize)'s automatic adjustment.
-- Signed over-the-air updates with automatic rollback.
+- Signed over-the-air updates with automatic rollback: uploaded from the web page, or fetched from
+  this repository's latest release weekly (a switch in Settings turns the automatic check off).
 - A panel maintenance mode (full-screen colour flats and a white park for idle hours).
 - USB mass-storage mode for the card (M5Paper Color).
 

@@ -63,6 +63,8 @@ typedef enum {
     APP_SETTING_MAINT_DAY,
     // Ticket 71.
     APP_SETTING_CHARGE_LIMIT,
+    // Ticket 61.
+    APP_SETTING_OTA_AUTO,
     APP_SETTING_COUNT,
 } app_setting_key_t;
 

@@ -19,7 +19,8 @@
 //   * TWO TRANSPORTS, ONE WRITER. POST /api/system/ota streams an upload into begin/write/finish;
 //     the PULL fetches FRAME_OTA_URL -- a GitHub "latest release" asset for this board -- into the
 //     same three calls, from a one-shot task. It runs APP_OTA_FIRST_CHECK_S after boot and every
-//     APP_OTA_EVERY_S after that, or on demand (POST /api/system/ota/check). "Is there anything to
+//     APP_OTA_EVERY_S after that unless the `ota_auto` setting is off, or on demand whatever that
+//     setting says (POST /api/system/ota/check). "Is there anything to
 //     fetch" is the release's app_elf_sha256 against the running image's, read from the first bytes
 //     of the download before anything is written; one that was already rolled back is skipped, so a
 //     bad release is not re-installed every week.

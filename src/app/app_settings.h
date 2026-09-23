@@ -274,6 +274,12 @@ typedef struct {
     //
     // Not one of FR-8's nine; the shipping firmware has no such setting and could not implement it.
     uint8_t charge_limit_pct;
+
+    // Ticket 61. Whether the frame checks the public release by itself (600 s after boot, then
+    // weekly). ON by default. Off stops only the automatic check: the page's "Check for updates"
+    // still works. It lives in NVS, so it survives a USB flash and an OTA alike -- which is what
+    // lets a bench board keep it off across development images.
+    bool ota_auto;
 } app_settings_t;
 
 // app_setting_key_t -- one key per NVS entry -- moved to src/core/app_setting_key.h on 2026-09-21
@@ -317,6 +323,7 @@ void app_settings_active_hours(uint8_t *start_hour, uint8_t *end_hour);
 // app_clock_local_wday() needs no separate enabled check -- 7 matches no weekday.
 bool app_settings_standby_white(void);
 bool app_settings_standby_deep(void);
+bool app_settings_ota_auto(void);
 uint8_t app_settings_maint_day(void);
 // 0, 80 or 100 -- always one of the three, so a caller can switch on it without a default case.
 uint8_t app_settings_charge_limit_pct(void);
@@ -387,6 +394,7 @@ esp_err_t app_settings_set_active_hours(int start_hour, int end_hour);
 // than clamped, for the reason app_settings_set_palette() gives.
 esp_err_t app_settings_set_standby_white(bool on);
 esp_err_t app_settings_set_standby_deep(bool on);
+esp_err_t app_settings_set_ota_auto(bool on);
 esp_err_t app_settings_set_maint_day(int day);
 // 0, 80 or 100 only. Anything else is ESP_ERR_INVALID_ARG rather than a clamp: a clamp would
 // answer 200 to a client that asked for 90 and silently give it something else. **Saving it is not
